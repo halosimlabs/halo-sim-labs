@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useGLTF, useAnimations, Environment } from '@react-three/drei'
+import { useGLTF, useAnimations } from '@react-three/drei'
 import {
   EffectComposer,
   Bloom,
@@ -495,11 +495,6 @@ function SceneContents({ activeCharacter }) {
   return (
     <>
       <SceneSetup />
-
-      {/* Neutral indoor HDR — studio preset suits the artificial lighting */}
-      <Suspense fallback={null}>
-        <Environment preset="studio" background={false} />
-      </Suspense>
 
       {/* ── Lighting ── */}
 
