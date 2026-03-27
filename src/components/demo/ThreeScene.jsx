@@ -543,10 +543,10 @@ function SceneContents({ activeCharacter }) {
 
         {/* Background pair — close friends, face-to-face conversation */}
         <Character url="/assets/models/Nothando.glb"
-          position={[-0.22, 1.1, -7.4]} rotation={[0, -Math.PI * 0.5, 0]}
+          position={[-0.22, 1.1, -7.4]} rotation={[0,  Math.PI * 0.5, 0]}
           isActive={false} charName="nothando" speakingCharacter="senzi" />
         <Character url="/assets/models/Senzi.glb"
-          position={[ 0.22, 1.1, -7.6]} rotation={[0,  Math.PI * 0.5, 0]}
+          position={[ 0.22, 1.1, -7.6]} rotation={[0, -Math.PI * 0.5, 0]}
           isActive={false} charName="senzi"    speakingCharacter="nothando" />
       </Suspense>
 
