@@ -382,7 +382,7 @@ function Character({ url, position, rotation, isActive, charName, speakingCharac
         if (child.material) {
           const upgrade = (m) => {
             const mc = m.clone()
-            mc.envMapIntensity = 1.0
+            mc.envMapIntensity = 0.55
             mc.needsUpdate = true
             return mc
           }
@@ -498,13 +498,13 @@ function SceneContents({ activeCharacter }) {
 
       {/* ── Lighting ── */}
 
-      {/* Warm fill so characters don't go fully dark on shadow side */}
-      <ambientLight intensity={0.55} color="#ffe8cc" />
+      {/* Warm fill — lower so characters sit in the corridor's natural dimness */}
+      <ambientLight intensity={0.28} color="#ffe8cc" />
 
-      {/* Key light: overhead angle, warm white, matching fluorescent positions */}
+      {/* Key light: overhead fluorescent angle, toned down */}
       <directionalLight
         position={[1, 4, 2]}
-        intensity={1.6}
+        intensity={0.92}
         color="#fff5e0"
         castShadow
         shadow-mapSize-width={2048}
@@ -518,8 +518,8 @@ function SceneContents({ activeCharacter }) {
         shadow-radius={5}
         shadow-bias={-0.0003}
       />
-      {/* Cool back-fill — prevents flat look, simulates reflected light from brick */}
-      <directionalLight position={[-2, 3, -6]} intensity={0.35} color="#ffd8b0" />
+      {/* Brick-bounce fill — subtle */}
+      <directionalLight position={[-2, 3, -6]} intensity={0.16} color="#ffd8b0" />
 
       <SchoolCorridor />
 
@@ -536,6 +536,14 @@ function SceneContents({ activeCharacter }) {
         <Character url="/assets/models/Nadine.glb"
           position={[0.7,  1.1, 0.8]}  rotation={[0, -Math.PI * 0.1,  0]}
           isActive={activeCharacter === 'nadine'}    charName="nadine"    speakingCharacter={activeCharacter} />
+
+        {/* Background students — deeper in the corridor, partially in fog */}
+        <Character url="/assets/models/Nothando.glb"
+          position={[-1.6, 1.1, -7.5]} rotation={[0,  Math.PI * 0.08, 0]}
+          isActive={false} charName="nothando" speakingCharacter={null} />
+        <Character url="/assets/models/Senzi.glb"
+          position={[ 1.4, 1.1, -9.0]} rotation={[0, -Math.PI * 0.12, 0]}
+          isActive={false} charName="senzi"    speakingCharacter={null} />
       </Suspense>
 
       <PostFX />
@@ -555,7 +563,7 @@ export default function ThreeScene({ activeCharacter }) {
       gl={{
         antialias: false,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.2,
+        toneMappingExposure: 1.0,
         outputColorSpace: THREE.SRGBColorSpace,
         powerPreference: 'high-performance',
       }}
@@ -570,3 +578,5 @@ useGLTF.preload('/assets/models/Melissa.glb')
 useGLTF.preload('/assets/models/Kelly.glb')
 useGLTF.preload('/assets/models/Nadine.glb')
 useGLTF.preload('/assets/models/Sthandile.glb')
+useGLTF.preload('/assets/models/Nothando.glb')
+useGLTF.preload('/assets/models/Senzi.glb')
