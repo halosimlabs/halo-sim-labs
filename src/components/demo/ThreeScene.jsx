@@ -163,33 +163,35 @@ function drawBrickBump(canvas) {
   }
 }
 
-function drawFloorTile(canvas) {
+function drawFloorConcrete(canvas) {
   const S = 512
   canvas.width = canvas.height = S
   const ctx = canvas.getContext('2d')
-  const GROUT = 7
-  const TILE  = S / 2 - GROUT  // 249px per tile
-  // Grout colour
-  ctx.fillStyle = '#b4a898'
+  // Dark charcoal base
+  ctx.fillStyle = '#2c2c2a'
   ctx.fillRect(0, 0, S, S)
-  for (let row = 0; row < 2; row++) {
-    for (let col = 0; col < 2; col++) {
-      const x = col * (S / 2) + GROUT / 2
-      const y = row * (S / 2) + GROUT / 2
-      const v = Math.sin(row * 5.31 + col * 8.73) * 10
-      const base = Math.round(204 + v)
-      ctx.fillStyle = `rgb(${base},${base - 4},${base - 10})`
-      ctx.fillRect(x, y, TILE, TILE)
-      // Subtle radial gloss — tile centre is slightly lighter/shinier
-      const grad = ctx.createRadialGradient(
-        x + TILE / 2, y + TILE / 2, TILE * 0.1,
-        x + TILE / 2, y + TILE / 2, TILE * 0.72,
-      )
-      grad.addColorStop(0, 'rgba(255,255,255,0.09)')
-      grad.addColorStop(1, 'rgba(0,0,0,0.05)')
-      ctx.fillStyle = grad
-      ctx.fillRect(x, y, TILE, TILE)
+  // Layered sin-based noise to break up the flat look
+  for (let y = 0; y < S; y += 2) {
+    for (let x = 0; x < S; x += 2) {
+      const n =
+        Math.sin(x * 0.031 + y * 0.017) * 7 +
+        Math.sin(x * 0.11  - y * 0.073) * 4 +
+        Math.sin(x * 0.057 + y * 0.13 ) * 3
+      const v = Math.round(44 + n)
+      ctx.fillStyle = `rgb(${v},${v},${v - 2})`
+      ctx.fillRect(x, y, 2, 2)
     }
+  }
+  // Subtle darker patches — worn areas
+  for (let i = 0; i < 6; i++) {
+    const px = (Math.sin(i * 37.1) * 0.5 + 0.5) * S
+    const py = (Math.sin(i * 53.7) * 0.5 + 0.5) * S
+    const r  = 40 + (Math.sin(i * 19.3) * 0.5 + 0.5) * 60
+    const g  = ctx.createRadialGradient(px, py, 0, px, py, r)
+    g.addColorStop(0, 'rgba(0,0,0,0.18)')
+    g.addColorStop(1, 'rgba(0,0,0,0)')
+    ctx.fillStyle = g
+    ctx.fillRect(0, 0, S, S)
   }
 }
 
@@ -203,7 +205,7 @@ function getCorridorTextures() {
   const floorCanvas      = document.createElement('canvas')
   drawBrickColor(brickColorCanvas)
   drawBrickBump (brickBumpCanvas)
-  drawFloorTile (floorCanvas)
+  drawFloorConcrete(floorCanvas)
 
   // Side walls — 30 m long × 2.5 m brick height
   // Real brick 225 mm × 75 mm; canvas = 4 bricks wide, 4 rows tall
@@ -223,7 +225,7 @@ function getCorridorTextures() {
   _ctex.backBrick   = mkTex(brickColorCanvas, 9,  8)
   _ctex.backBump    = mkTex(brickBumpCanvas,  9,  8)
   // Floor — 8.4 m × 30 m, 30 cm tiles, 2 tiles per canvas → repeat (14, 50)
-  _ctex.floor       = mkTex(floorCanvas, 14, 50)
+  _ctex.floor       = mkTex(floorCanvas, 6, 20)
 
   _ctex.ready = true
   return _ctex
@@ -248,7 +250,7 @@ function SchoolCorridor() {
       {/* ── Floor — textured polished tile ── */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, zMid]} receiveShadow>
         <planeGeometry args={[wallX * 2, len]} />
-        <meshStandardMaterial map={tex.floor} roughness={0.38} metalness={0.06} />
+        <meshStandardMaterial map={tex.floor} roughness={0.88} metalness={0.0} />
       </mesh>
 
       {/* ── Ceiling ── */}
