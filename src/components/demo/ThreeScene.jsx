@@ -8,7 +8,6 @@ import {
   Vignette,
   HueSaturation,
   BrightnessContrast,
-  N8AO,
 } from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
 import { useRef, useEffect, Suspense } from 'react'
@@ -33,7 +32,7 @@ const FLOWER_DATA = (() => {
 // ── Scene environment setup ───────────────────────────────────────────────────
 
 function SceneSetup() {
-  const { scene, gl } = useThree()
+  const { scene } = useThree()
   useEffect(() => {
     // Warm sky blue background
     scene.background = new THREE.Color('#8fd4f8')
@@ -372,18 +371,9 @@ function Character({ url, position, rotation, isActive, charName, speakingCharac
 
 function PostFX() {
   return (
-    <EffectComposer multisampling={0} disableNormalPass={false}>
+    <EffectComposer multisampling={0}>
       {/* Anti-aliasing — replaces MSAA, works with post-processing */}
       <SMAA />
-
-      {/* Ambient occlusion — grounds characters in the scene */}
-      <N8AO
-        aoRadius={2.0}
-        intensity={1.8}
-        quality="medium"
-        halfRes
-        depthAwareUpsampling
-      />
 
       {/* Depth of field — characters sharp, background gently blurred */}
       <DepthOfField
