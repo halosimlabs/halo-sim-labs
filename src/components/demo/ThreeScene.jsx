@@ -97,125 +97,244 @@ function NoticeBoard({ z, scale = 1 }) {
   )
 }
 
+// ── Procedural canvas textures ────────────────────────────────────────────────
+// Created once on first render, shared across all corridor instances.
+
+function drawBrickColor(canvas) {
+  const W = 512, H = 256
+  canvas.width = W; canvas.height = H
+  const ctx = canvas.getContext('2d')
+  const BW = 118, BH = 44, MV = 7, MH = 10  // brick + mortar dims in px
+  const cStride = BW + MV, rStride = BH + MH
+  const rows = Math.ceil(H / rStride) + 1
+  const cols = Math.ceil(W / cStride) + 2
+  // Mortar — warm grey
+  ctx.fillStyle = '#8a7a6e'
+  ctx.fillRect(0, 0, W, H)
+  for (let r = 0; r < rows; r++) {
+    const y = r * rStride + MH * 0.5
+    const ox = (r % 2) * (cStride / 2)
+    for (let c = 0; c < cols; c++) {
+      const x = c * cStride - ox + MV * 0.5
+      // Per-brick colour variation — deterministic, no Math.random
+      const v = Math.sin(r * 7.31 + c * 13.77) * 16
+      const rc = Math.min(255, Math.max(0, Math.round(142 + v)))
+      const gc = Math.min(255, Math.max(0, Math.round(66  + v * 0.38)))
+      const bc = Math.min(255, Math.max(0, Math.round(42  + v * 0.28)))
+      ctx.fillStyle = `rgb(${rc},${gc},${bc})`
+      ctx.fillRect(x, y, BW, BH)
+      // Top-edge shadow — gives each brick a raised look
+      ctx.fillStyle = 'rgba(0,0,0,0.18)'
+      ctx.fillRect(x, y, BW, 3)
+      // Bottom highlight — catches the light
+      ctx.fillStyle = 'rgba(255,255,255,0.07)'
+      ctx.fillRect(x, y + BH - 3, BW, 3)
+    }
+  }
+}
+
+function drawBrickBump(canvas) {
+  const W = 512, H = 256
+  canvas.width = W; canvas.height = H
+  const ctx = canvas.getContext('2d')
+  const BW = 118, BH = 44, MV = 7, MH = 10
+  const cStride = BW + MV, rStride = BH + MH
+  const rows = Math.ceil(H / rStride) + 1
+  const cols = Math.ceil(W / cStride) + 2
+  // Mortar = dark (low/recessed)
+  ctx.fillStyle = '#363636'
+  ctx.fillRect(0, 0, W, H)
+  for (let r = 0; r < rows; r++) {
+    const y = r * rStride + MH * 0.5
+    const ox = (r % 2) * (cStride / 2)
+    for (let c = 0; c < cols; c++) {
+      const x = c * cStride - ox + MV * 0.5
+      // Brick face = lighter (raised)
+      ctx.fillStyle = '#b2b2b2'
+      ctx.fillRect(x, y, BW, BH)
+      // Brighter centre — peak of the raised surface
+      ctx.fillStyle = '#d0d0d0'
+      ctx.fillRect(x + 4, y + 4, BW - 8, BH - 8)
+      // Recessed edge bevel
+      ctx.fillStyle = '#787878'
+      ctx.fillRect(x, y, BW, 2)
+      ctx.fillRect(x, y, 2, BH)
+    }
+  }
+}
+
+function drawFloorTile(canvas) {
+  const S = 512
+  canvas.width = canvas.height = S
+  const ctx = canvas.getContext('2d')
+  const GROUT = 7
+  const TILE  = S / 2 - GROUT  // 249px per tile
+  // Grout colour
+  ctx.fillStyle = '#b4a898'
+  ctx.fillRect(0, 0, S, S)
+  for (let row = 0; row < 2; row++) {
+    for (let col = 0; col < 2; col++) {
+      const x = col * (S / 2) + GROUT / 2
+      const y = row * (S / 2) + GROUT / 2
+      const v = Math.sin(row * 5.31 + col * 8.73) * 10
+      const base = Math.round(204 + v)
+      ctx.fillStyle = `rgb(${base},${base - 4},${base - 10})`
+      ctx.fillRect(x, y, TILE, TILE)
+      // Subtle radial gloss — tile centre is slightly lighter/shinier
+      const grad = ctx.createRadialGradient(
+        x + TILE / 2, y + TILE / 2, TILE * 0.1,
+        x + TILE / 2, y + TILE / 2, TILE * 0.72,
+      )
+      grad.addColorStop(0, 'rgba(255,255,255,0.09)')
+      grad.addColorStop(1, 'rgba(0,0,0,0.05)')
+      ctx.fillStyle = grad
+      ctx.fillRect(x, y, TILE, TILE)
+    }
+  }
+}
+
+// Lazy-initialised texture singletons (one canvas each, multiple CanvasTextures)
+const _ctex = {}
+function getCorridorTextures() {
+  if (_ctex.ready) return _ctex
+
+  const brickColorCanvas = document.createElement('canvas')
+  const brickBumpCanvas  = document.createElement('canvas')
+  const floorCanvas      = document.createElement('canvas')
+  drawBrickColor(brickColorCanvas)
+  drawBrickBump (brickBumpCanvas)
+  drawFloorTile (floorCanvas)
+
+  // Side walls — 30 m long × 2.5 m brick height
+  // Real brick 225 mm × 75 mm; canvas = 4 bricks wide, 4 rows tall
+  // repeat X = 30 / 0.225 / 4 ≈ 33   repeat Y = 2.5 / 0.075 / 4 ≈ 8
+  const mkTex = (canvas, rX, rY) => {
+    const t = new THREE.CanvasTexture(canvas)
+    t.wrapS = t.wrapT = THREE.RepeatWrapping
+    t.repeat.set(rX, rY)
+    t.needsUpdate = true
+    return t
+  }
+  _ctex.wallBrickL  = mkTex(brickColorCanvas, 33, 8)
+  _ctex.wallBumpL   = mkTex(brickBumpCanvas,  33, 8)
+  _ctex.wallBrickR  = mkTex(brickColorCanvas, 33, 8)
+  _ctex.wallBumpR   = mkTex(brickBumpCanvas,  33, 8)
+  // Back wall — 8.4 m wide × 2.5 m brick height → repeat (9, 8)
+  _ctex.backBrick   = mkTex(brickColorCanvas, 9,  8)
+  _ctex.backBump    = mkTex(brickBumpCanvas,  9,  8)
+  // Floor — 8.4 m × 30 m, 30 cm tiles, 2 tiles per canvas → repeat (14, 50)
+  _ctex.floor       = mkTex(floorCanvas, 14, 50)
+
+  _ctex.ready = true
+  return _ctex
+}
+
 // ── SA School Corridor ────────────────────────────────────────────────────────
 
 function SchoolCorridor() {
-  const wallX   = 4.2   // half-width
-  const ceilY   = 3.45
-  const zNear   =  6    // behind camera
-  const zFar    = -24
-  const len     = zNear - zFar   // 30
+  const tex = getCorridorTextures()
 
-  // Brick colour — warm red-brown like the reference photo
-  const brickCol  = '#8b4028'
-  const mortarCol = '#7a3820' // slightly darker for depth
-  // Dark bottle-green wainscoting (lower 0.95 m)
+  const wallX    = 4.2   // half-width (interior face)
+  const ceilY    = 3.45
+  const zNear    =  6    // slightly behind camera
+  const zFar     = -24
+  const len      = zNear - zFar   // 30 m
+  const zMid     = (zNear + zFar) / 2   // −9
   const wainscotH = 0.95
-  const wainscotC = '#2d5038'
-  // Cream tile floor
-  const floorCol  = '#cec8b8'
-  // Ceiling warm white
-  const ceilCol   = '#f0ece0'
-
-  const zMid = (zNear + zFar) / 2  // -9
+  const brickH    = ceilY - wainscotH   // 2.5 m
 
   return (
     <>
-      {/* ── Floor — cream tile ── */}
+      {/* ── Floor — textured polished tile ── */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, zMid]} receiveShadow>
         <planeGeometry args={[wallX * 2, len]} />
-        <meshStandardMaterial color={floorCol} roughness={0.55} metalness={0.04} />
+        <meshStandardMaterial map={tex.floor} roughness={0.38} metalness={0.06} />
       </mesh>
-      {/* Subtle tile grout lines — dark strips in a grid */}
-      {Array.from({ length: 12 }, (_, i) => (
-        <mesh key={`g${i}`} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.001, zFar + i * 2.5 + 1.25]}>
-          <planeGeometry args={[wallX * 2, 0.025]} />
-          <meshStandardMaterial color="#b0a898" roughness={1} />
-        </mesh>
-      ))}
-      {[-3.5, -1.5, 0.5, 2.5].map((x) => (
-        <mesh key={`gv${x}`} rotation={[-Math.PI / 2, 0, 0]} position={[x, 0.001, zMid]}>
-          <planeGeometry args={[0.025, len]} />
-          <meshStandardMaterial color="#b0a898" roughness={1} />
-        </mesh>
-      ))}
 
       {/* ── Ceiling ── */}
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, ceilY, zMid]}>
         <planeGeometry args={[wallX * 2, len]} />
-        <meshStandardMaterial color={ceilCol} roughness={0.9} />
+        <meshStandardMaterial color="#f0ece0" roughness={0.92} />
       </mesh>
 
-      {/* ── Left wall — two sections ── */}
-      {/* Upper: brick */}
-      <mesh position={[-wallX, wainscotH + (ceilY - wainscotH) / 2, zMid]}>
-        <planeGeometry args={[len, ceilY - wainscotH]} />
-        <meshStandardMaterial color={brickCol} roughness={0.92} metalness={0.0} side={THREE.FrontSide} />
+      {/* ── Left wall — faces +X (into corridor) ── */}
+      {/* Brick section */}
+      <mesh rotation={[0, Math.PI / 2, 0]}
+            position={[-wallX, wainscotH + brickH / 2, zMid]} receiveShadow>
+        <planeGeometry args={[len, brickH]} />
+        <meshStandardMaterial
+          map={tex.wallBrickL}
+          bumpMap={tex.wallBumpL}
+          bumpScale={0.024}
+          roughness={0.9}
+          metalness={0.0}
+        />
       </mesh>
-      {/* Brick mortar row accent strips — evenly spaced horizontal lines */}
-      {Array.from({ length: 14 }, (_, i) => (
-        <mesh key={`lb${i}`} position={[-wallX + 0.002, wainscotH + 0.12 + i * 0.185, zMid]}>
-          <planeGeometry args={[len, 0.018]} />
-          <meshStandardMaterial color={mortarCol} roughness={1.0} />
-        </mesh>
-      ))}
-      {/* Lower: dark green wainscot */}
-      <mesh position={[-wallX, wainscotH / 2, zMid]}>
+      {/* Wainscot */}
+      <mesh rotation={[0, Math.PI / 2, 0]}
+            position={[-wallX, wainscotH / 2, zMid]}>
         <planeGeometry args={[len, wainscotH]} />
-        <meshStandardMaterial color={wainscotC} roughness={0.85} metalness={0.0} />
+        <meshStandardMaterial color="#2d5038" roughness={0.78} metalness={0.03} />
       </mesh>
-      {/* Wainscot cap rail */}
-      <mesh position={[-wallX + 0.01, wainscotH + 0.04, zMid]}>
-        <planeGeometry args={[len, 0.08]} />
-        <meshStandardMaterial color="#1e3828" roughness={0.8} />
+      {/* Cap rail */}
+      <mesh position={[-wallX + 0.025, wainscotH + 0.045, zMid]}>
+        <boxGeometry args={[0.05, 0.09, len]} />
+        <meshStandardMaterial color="#1c3024" roughness={0.72} metalness={0.04} />
       </mesh>
 
-      {/* ── Right wall ── */}
-      <mesh rotation={[0, Math.PI, 0]} position={[wallX, wainscotH + (ceilY - wainscotH) / 2, zMid]}>
-        <planeGeometry args={[len, ceilY - wainscotH]} />
-        <meshStandardMaterial color={brickCol} roughness={0.92} metalness={0.0} />
+      {/* ── Right wall — faces −X (into corridor) ── */}
+      <mesh rotation={[0, -Math.PI / 2, 0]}
+            position={[wallX, wainscotH + brickH / 2, zMid]} receiveShadow>
+        <planeGeometry args={[len, brickH]} />
+        <meshStandardMaterial
+          map={tex.wallBrickR}
+          bumpMap={tex.wallBumpR}
+          bumpScale={0.024}
+          roughness={0.9}
+          metalness={0.0}
+        />
       </mesh>
-      {Array.from({ length: 14 }, (_, i) => (
-        <mesh key={`rb${i}`} rotation={[0, Math.PI, 0]} position={[wallX - 0.002, wainscotH + 0.12 + i * 0.185, zMid]}>
-          <planeGeometry args={[len, 0.018]} />
-          <meshStandardMaterial color={mortarCol} roughness={1.0} />
-        </mesh>
-      ))}
-      <mesh rotation={[0, Math.PI, 0]} position={[wallX, wainscotH / 2, zMid]}>
+      <mesh rotation={[0, -Math.PI / 2, 0]}
+            position={[wallX, wainscotH / 2, zMid]}>
         <planeGeometry args={[len, wainscotH]} />
-        <meshStandardMaterial color={wainscotC} roughness={0.85} />
+        <meshStandardMaterial color="#2d5038" roughness={0.78} metalness={0.03} />
       </mesh>
-      <mesh rotation={[0, Math.PI, 0]} position={[wallX - 0.01, wainscotH + 0.04, zMid]}>
-        <planeGeometry args={[len, 0.08]} />
-        <meshStandardMaterial color="#1e3828" roughness={0.8} />
+      <mesh position={[wallX - 0.025, wainscotH + 0.045, zMid]}>
+        <boxGeometry args={[0.05, 0.09, len]} />
+        <meshStandardMaterial color="#1c3024" roughness={0.72} metalness={0.04} />
       </mesh>
 
       {/* ── Back wall ── */}
-      <mesh position={[0, ceilY / 2, zFar]}>
-        <planeGeometry args={[wallX * 2, ceilY]} />
-        <meshStandardMaterial color={brickCol} roughness={0.95} />
+      <mesh position={[0, wainscotH + brickH / 2, zFar]}>
+        <planeGeometry args={[wallX * 2, brickH]} />
+        <meshStandardMaterial
+          map={tex.backBrick}
+          bumpMap={tex.backBump}
+          bumpScale={0.024}
+          roughness={0.92}
+        />
       </mesh>
       <mesh position={[0, wainscotH / 2, zFar + 0.01]}>
         <planeGeometry args={[wallX * 2, wainscotH]} />
-        <meshStandardMaterial color={wainscotC} roughness={0.88} />
+        <meshStandardMaterial color="#2d5038" roughness={0.82} />
       </mesh>
 
       {/* ── Fluorescent ceiling lights ── */}
-      <FluorescentPanel z={0.5}  intensity={1.0} />
-      <FluorescentPanel z={-4.5} intensity={0.95} />
-      <FluorescentPanel z={-9.0} intensity={0.85} />
-      <FluorescentPanel z={-13.5} intensity={0.7} />
-      <FluorescentPanel z={-18.0} intensity={0.5} />
+      <FluorescentPanel z={ 0.5} intensity={1.00} />
+      <FluorescentPanel z={-4.5} intensity={0.92} />
+      <FluorescentPanel z={-9.0} intensity={0.80} />
+      <FluorescentPanel z={-13.5} intensity={0.65} />
+      <FluorescentPanel z={-18.0} intensity={0.48} />
 
       {/* ── Notice boards on right wall ── */}
       <NoticeBoard z={-1.5} scale={1.0} />
       <NoticeBoard z={-5.5} scale={0.95} />
       <NoticeBoard z={-9.5} scale={0.9} />
 
-      {/* ── Small shelf/ledge on left wall (visible in reference) ── */}
-      <mesh position={[-wallX + 0.12, 1.0, -2]}>
-        <boxGeometry args={[0.24, 0.04, 0.8]} />
-        <meshStandardMaterial color="#1e3828" roughness={0.8} />
+      {/* ── Ledge on left wall (visible in reference photo) ── */}
+      <mesh position={[-wallX + 0.14, 1.0, -1.8]}>
+        <boxGeometry args={[0.28, 0.05, 0.9]} />
+        <meshStandardMaterial color="#1c3024" roughness={0.75} />
       </mesh>
     </>
   )
