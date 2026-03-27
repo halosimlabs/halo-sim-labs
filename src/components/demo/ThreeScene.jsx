@@ -1,5 +1,16 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useGLTF, useAnimations } from '@react-three/drei'
+import { useGLTF, useAnimations, Environment } from '@react-three/drei'
+import {
+  EffectComposer,
+  Bloom,
+  DepthOfField,
+  SMAA,
+  Vignette,
+  HueSaturation,
+  BrightnessContrast,
+  N8AO,
+} from '@react-three/postprocessing'
+import { BlendFunction } from 'postprocessing'
 import { useRef, useEffect, Suspense } from 'react'
 import * as THREE from 'three'
 
@@ -19,12 +30,17 @@ const FLOWER_DATA = (() => {
   })
 })()
 
-// ── Sky ───────────────────────────────────────────────────────────────────────
+// ── Scene environment setup ───────────────────────────────────────────────────
 
-function SceneBackground() {
-  const { scene } = useThree()
+function SceneSetup() {
+  const { scene, gl } = useThree()
   useEffect(() => {
-    scene.background = new THREE.Color('#87cef5')
+    // Warm sky blue background
+    scene.background = new THREE.Color('#8fd4f8')
+    // Subtle environment fog for depth
+    scene.fog = new THREE.FogExp2('#b8dff5', 0.022)
+    // Control HDR environment contribution
+    scene.environmentIntensity = 0.85
   }, [scene])
   return null
 }
@@ -34,13 +50,20 @@ function SceneBackground() {
 function Sun() {
   return (
     <group position={[14, 20, -32]}>
+      {/* Core disc */}
       <mesh>
         <sphereGeometry args={[2.0, 16, 16]} />
-        <meshBasicMaterial color="#fff5a0" />
+        <meshBasicMaterial color="#fff9c4" />
       </mesh>
+      {/* Inner glow halo */}
       <mesh>
-        <sphereGeometry args={[2.9, 16, 16]} />
-        <meshBasicMaterial color="#fffac8" transparent opacity={0.22} />
+        <sphereGeometry args={[3.2, 16, 16]} />
+        <meshBasicMaterial color="#fff5a0" transparent opacity={0.18} depthWrite={false} />
+      </mesh>
+      {/* Outer glow */}
+      <mesh>
+        <sphereGeometry args={[4.4, 16, 16]} />
+        <meshBasicMaterial color="#ffe060" transparent opacity={0.07} depthWrite={false} />
       </mesh>
     </group>
   )
@@ -51,10 +74,10 @@ function Sun() {
 function Cloud({ position, scale = 1 }) {
   return (
     <group position={position} scale={scale}>
-      <mesh><sphereGeometry args={[1.0, 8, 6]} /><meshBasicMaterial color="#ffffff" /></mesh>
-      <mesh position={[1.2, 0.15, 0]}><sphereGeometry args={[0.75, 8, 6]} /><meshBasicMaterial color="#f5f5f5" /></mesh>
-      <mesh position={[-1.0, 0.05, 0]}><sphereGeometry args={[0.65, 8, 6]} /><meshBasicMaterial color="#f8f8f8" /></mesh>
-      <mesh position={[0.3, 0.55, 0]}><sphereGeometry args={[0.58, 8, 6]} /><meshBasicMaterial color="#ffffff" /></mesh>
+      <mesh><sphereGeometry args={[1.0, 8, 6]} /><meshStandardMaterial color="#ffffff" roughness={1} envMapIntensity={0} /></mesh>
+      <mesh position={[1.2, 0.15, 0]}><sphereGeometry args={[0.75, 8, 6]} /><meshStandardMaterial color="#f5f5f5" roughness={1} envMapIntensity={0} /></mesh>
+      <mesh position={[-1.0, 0.05, 0]}><sphereGeometry args={[0.65, 8, 6]} /><meshStandardMaterial color="#f8f8f8" roughness={1} envMapIntensity={0} /></mesh>
+      <mesh position={[0.3, 0.55, 0]}><sphereGeometry args={[0.58, 8, 6]} /><meshStandardMaterial color="#ffffff" roughness={1} envMapIntensity={0} /></mesh>
     </group>
   )
 }
@@ -66,15 +89,15 @@ function Flower({ x, z, color, scale }) {
     <group position={[x, 0.01, z]}>
       <mesh position={[0, 0.07, 0]}>
         <cylinderGeometry args={[0.011, 0.011, 0.14, 4]} />
-        <meshStandardMaterial color="#3a8a2a" />
+        <meshStandardMaterial color="#3a8a2a" roughness={0.9} />
       </mesh>
       <mesh position={[0, 0.155, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <circleGeometry args={[scale, 6]} />
-        <meshStandardMaterial color={color} side={THREE.DoubleSide} />
+        <meshStandardMaterial color={color} side={THREE.DoubleSide} roughness={0.8} />
       </mesh>
       <mesh position={[0, 0.158, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <circleGeometry args={[scale * 0.38, 6]} />
-        <meshStandardMaterial color="#ffe822" side={THREE.DoubleSide} />
+        <meshStandardMaterial color="#ffe822" side={THREE.DoubleSide} roughness={0.8} />
       </mesh>
     </group>
   )
@@ -85,17 +108,17 @@ function Flower({ x, z, color, scale }) {
 function Tree({ position, height = 3.8, cr = 1.7, lc = '#3d8c2a' }) {
   return (
     <group position={position}>
-      <mesh position={[0, height / 2, 0]} castShadow>
+      <mesh position={[0, height / 2, 0]} castShadow receiveShadow>
         <cylinderGeometry args={[0.14, 0.22, height, 8]} />
-        <meshStandardMaterial color="#6b4423" roughness={0.9} />
+        <meshStandardMaterial color="#6b4423" roughness={0.95} metalness={0.0} />
       </mesh>
-      <mesh position={[0, height + cr * 0.45, 0]} castShadow>
+      <mesh position={[0, height + cr * 0.45, 0]} castShadow receiveShadow>
         <sphereGeometry args={[cr, 10, 8]} />
-        <meshStandardMaterial color={lc} roughness={1} />
+        <meshStandardMaterial color={lc} roughness={0.95} metalness={0.0} />
       </mesh>
       <mesh position={[0.35, height + cr * 0.82, 0.25]} castShadow>
         <sphereGeometry args={[cr * 0.62, 8, 7]} />
-        <meshStandardMaterial color="#4aaa33" roughness={1} />
+        <meshStandardMaterial color="#4aaa33" roughness={0.95} metalness={0.0} />
       </mesh>
     </group>
   )
@@ -106,9 +129,9 @@ function Tree({ position, height = 3.8, cr = 1.7, lc = '#3d8c2a' }) {
 function Bush({ x, z }) {
   return (
     <group position={[x, 0.38, z]}>
-      <mesh><sphereGeometry args={[0.62, 8, 6]} /><meshStandardMaterial color="#3a7a28" roughness={1} /></mesh>
-      <mesh position={[0.52, 0.08, 0]}><sphereGeometry args={[0.48, 8, 6]} /><meshStandardMaterial color="#4a8a32" roughness={1} /></mesh>
-      <mesh position={[-0.44, 0.05, 0.18]}><sphereGeometry args={[0.46, 8, 6]} /><meshStandardMaterial color="#3d7525" roughness={1} /></mesh>
+      <mesh castShadow><sphereGeometry args={[0.62, 8, 6]} /><meshStandardMaterial color="#3a7a28" roughness={0.95} /></mesh>
+      <mesh position={[0.52, 0.08, 0]} castShadow><sphereGeometry args={[0.48, 8, 6]} /><meshStandardMaterial color="#4a8a32" roughness={0.95} /></mesh>
+      <mesh position={[-0.44, 0.05, 0.18]} castShadow><sphereGeometry args={[0.46, 8, 6]} /><meshStandardMaterial color="#3d7525" roughness={0.95} /></mesh>
     </group>
   )
 }
@@ -120,15 +143,15 @@ const FENCE_COLORS = ['#e84040', '#f5a020', '#3399dd', '#44bb44', '#e84040', '#f
 function SchoolPlayground() {
   return (
     <>
-      {/* Grass ground */}
+      {/* Grass — slightly rough PBR for better light interaction */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[80, 80]} />
-        <meshStandardMaterial color="#5aaa3a" roughness={1} />
+        <meshStandardMaterial color="#52a035" roughness={1.0} metalness={0.0} />
       </mesh>
       {/* Brighter patch under characters */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.002, 0]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.002, 0]} receiveShadow>
         <planeGeometry args={[9, 7]} />
-        <meshStandardMaterial color="#65bc45" roughness={1} />
+        <meshStandardMaterial color="#62b842" roughness={0.98} metalness={0.0} />
       </mesh>
 
       <Sun />
@@ -142,12 +165,12 @@ function SchoolPlayground() {
       {/* Trees */}
       <Tree position={[-9,   0, -10]} height={4.2} cr={1.9} lc="#3d8c2a" />
       <Tree position={[-6.5, 0, -13]} height={5.5} cr={2.2} lc="#2e7a20" />
-      <Tree position={[-13,  0, -6]}  height={3.4} cr={1.5} lc="#529c38" />
+      <Tree position={[-13,  0,  -6]} height={3.4} cr={1.5} lc="#529c38" />
       <Tree position={[9,    0, -11]} height={4.0} cr={1.8} lc="#4a9e32" />
-      <Tree position={[11.5, 0, -7]}  height={3.8} cr={1.6} lc="#3a8828" />
+      <Tree position={[11.5, 0,  -7]} height={3.8} cr={1.6} lc="#3a8828" />
       <Tree position={[7,    0, -13]} height={5.0} cr={2.0} lc="#3d8c2a" />
-      <Tree position={[-14,  0, -2]}  height={3.2} cr={1.4} lc="#459930" />
-      <Tree position={[14,   0, -2]}  height={3.6} cr={1.7} lc="#3d8c2a" />
+      <Tree position={[-14,  0,  -2]} height={3.2} cr={1.4} lc="#459930" />
+      <Tree position={[14,   0,  -2]} height={3.6} cr={1.7} lc="#3d8c2a" />
 
       {/* Bushes */}
       <Bush x={-5.5} z={-7} />
@@ -165,11 +188,11 @@ function SchoolPlayground() {
       {/* School building back wall */}
       <mesh position={[0, 4.5, -17]} receiveShadow>
         <planeGeometry args={[34, 9]} />
-        <meshStandardMaterial color="#f0e8d4" roughness={0.9} />
+        <meshStandardMaterial color="#f0e8d4" roughness={0.92} metalness={0.0} />
       </mesh>
       <mesh position={[0, 1.1, -16.97]}>
         <planeGeometry args={[34, 2.2]} />
-        <meshStandardMaterial color="#2d5a3d" roughness={0.85} />
+        <meshStandardMaterial color="#2d5a3d" roughness={0.88} metalness={0.0} />
       </mesh>
       {[-9, -3, 3, 9].map((x) => (
         <group key={x} position={[x, 3.8, -16.9]}>
@@ -179,41 +202,42 @@ function SchoolPlayground() {
           </mesh>
           <mesh position={[0, 0, 0.04]}>
             <planeGeometry args={[1.8, 1.4]} />
-            <meshStandardMaterial color="#b8d4f0" roughness={0.05} transparent opacity={0.6} />
+            <meshStandardMaterial color="#b8d4f0" roughness={0.05} metalness={0.1} transparent opacity={0.6} />
           </mesh>
         </group>
       ))}
 
       {/* Colourful fence */}
       {Array.from({ length: 30 }, (_, i) => (
-        <mesh key={i} position={[i * 1.0 - 14.5, 0.75, -10]}>
+        <mesh key={i} position={[i * 1.0 - 14.5, 0.75, -10]} castShadow>
           <boxGeometry args={[0.07, 1.5, 0.07]} />
-          <meshStandardMaterial color={FENCE_COLORS[i % FENCE_COLORS.length]} roughness={0.5} />
+          <meshStandardMaterial color={FENCE_COLORS[i % FENCE_COLORS.length]} roughness={0.55} metalness={0.1} />
         </mesh>
       ))}
       <mesh position={[0, 1.5, -10]}>
         <boxGeometry args={[30, 0.07, 0.07]} />
-        <meshStandardMaterial color="#e0c080" roughness={0.5} />
+        <meshStandardMaterial color="#e0c080" roughness={0.55} />
       </mesh>
 
       {/* Wooden bench */}
-      <mesh position={[-5.5, 0.27, 1.8]} castShadow>
+      <mesh position={[-5.5, 0.27, 1.8]} castShadow receiveShadow>
         <boxGeometry args={[2.2, 0.1, 0.42]} />
-        <meshStandardMaterial color="#e06030" roughness={0.7} />
+        <meshStandardMaterial color="#c85520" roughness={0.72} metalness={0.0} />
       </mesh>
-      <mesh position={[-4.9, 0.13, 1.8]}>
+      <mesh position={[-4.9, 0.13, 1.8]} castShadow>
         <boxGeometry args={[0.1, 0.26, 0.42]} />
-        <meshStandardMaterial color="#c04010" />
+        <meshStandardMaterial color="#a03a10" roughness={0.8} />
       </mesh>
-      <mesh position={[-6.1, 0.13, 1.8]}>
+      <mesh position={[-6.1, 0.13, 1.8]} castShadow>
         <boxGeometry args={[0.1, 0.26, 0.42]} />
-        <meshStandardMaterial color="#c04010" />
+        <meshStandardMaterial color="#a03a10" roughness={0.8} />
       </mesh>
     </>
   )
 }
 
-// ── Head turn lookup ──────────────────────────────────────────────────────────
+// ── Head-turn lookup ──────────────────────────────────────────────────────────
+// Tuned to scene layout: melissa(–2.2, 0.5) kelly(0.5,–0.5) nadine(0.7, 0.8) sthandile(1.8, 0)
 
 function headTurnY(charName, speaker) {
   if (!speaker || charName === speaker) return 0
@@ -235,13 +259,12 @@ function Character({ url, position, rotation, isActive, charName, speakingCharac
   if (!clonedScene.current) clonedScene.current = scene.clone(true)
   const { actions, names } = useAnimations(animations, group)
 
-  // Deterministic per-character phase offset so breathing is not synchronised
+  // Per-character phase offset — prevents synced breathing
   const seed = useRef(charName.charCodeAt(0) * 0.7853)
-
   const headBone  = useRef(null)
   const spineBone = useRef(null)
 
-  // Discover bones once after model loads
+  // Discover head/spine bones once
   useEffect(() => {
     clonedScene.current.traverse((obj) => {
       const n = obj.name.toLowerCase()
@@ -250,13 +273,25 @@ function Character({ url, position, rotation, isActive, charName, speakingCharac
     })
   }, [])
 
-  // Idle animation
+  // Enable shadows + upgrade materials for HDR lighting
   useEffect(() => {
-    if (names.length > 0) {
-      const action = actions['idle'] || actions['Idle'] || actions['mixamo.com'] || actions[names[0]]
-      if (action) action.reset().fadeIn(0.3).play()
-    }
-  }, [actions, names])
+    clonedScene.current.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow    = true
+        child.receiveShadow = true
+        // Boost material quality for PBR rendering
+        if (child.material) {
+          const upgrade = (m) => {
+            const mc = m.clone()
+            mc.envMapIntensity = 1.2
+            mc.needsUpdate = true
+            return mc
+          }
+          child.material = Array.isArray(child.material) ? child.material.map(upgrade) : upgrade(child.material)
+        }
+      }
+    })
+  }, [])
 
   // Emissive highlight for active speaker
   useEffect(() => {
@@ -264,7 +299,9 @@ function Character({ url, position, rotation, isActive, charName, speakingCharac
       if (child.isMesh && child.material) {
         const apply = (m) => {
           const mc = m.clone()
-          mc.emissive = new THREE.Color(isActive ? 0x222233 : 0x000000)
+          mc.emissive    = new THREE.Color(isActive ? 0x1a1825 : 0x000000)
+          mc.emissiveIntensity = isActive ? 1.0 : 0.0
+          mc.needsUpdate = true
           return mc
         }
         child.material = Array.isArray(child.material) ? child.material.map(apply) : apply(child.material)
@@ -272,7 +309,15 @@ function Character({ url, position, rotation, isActive, charName, speakingCharac
     })
   }, [isActive])
 
-  // Set initial world transform once — avoids R3F re-applying inline arrays on re-render
+  // Play idle animation
+  useEffect(() => {
+    if (names.length > 0) {
+      const action = actions['idle'] || actions['Idle'] || actions['mixamo.com'] || actions[names[0]]
+      if (action) action.reset().fadeIn(0.3).play()
+    }
+  }, [actions, names])
+
+  // Base transform set once — prevents R3F overwriting on re-render
   useEffect(() => {
     if (!group.current) return
     group.current.position.set(...position)
@@ -284,40 +329,37 @@ function Character({ url, position, rotation, isActive, charName, speakingCharac
     const t = clock.elapsedTime
     const s = seed.current
 
-    // Breathing: gentle vertical oscillation
+    // ── Breathing — gentle y oscillation ──────────────────────────────────
     const breathe = Math.sin(t * 1.15 + s) * 0.009
 
-    // Body sway: slow side-to-side tilt
+    // ── Body sway — slow side-to-side tilt ────────────────────────────────
     const sway = Math.sin(t * 0.65 + s * 0.7) * 0.013
 
-    // Contextual animation targets
+    // ── Contextual targets ─────────────────────────────────────────────────
     const isUnderPressure =
       charName === 'melissa' && (speakingCharacter === 'kelly' || speakingCharacter === 'nadine')
     const isLeaning =
       (charName === 'kelly' || charName === 'nadine') && speakingCharacter === charName
 
-    // Kelly/Nadine lean toward Melissa (she's on their left, so +z tilt)
     const targetLeanZ    = isLeaning       ? 0.08  : 0
-    // Melissa's body tenses forward when pressured
     const targetTensionX = isUnderPressure ? 0.045 : 0
 
-    // Position — lock x/z, animate y
+    // ── Apply transforms ───────────────────────────────────────────────────
     group.current.position.x = position[0]
     group.current.position.z = position[2]
     group.current.position.y = position[1] + breathe
 
-    // Rotation — lock y to base facing, lerp x/z for animation
     group.current.rotation.y = rotation[1]
     group.current.rotation.z = THREE.MathUtils.lerp(group.current.rotation.z, sway + targetLeanZ,  0.05)
     group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, targetTensionX,      0.05)
 
-    // Head turn toward current speaker
+    // ── Head turn toward current speaker ──────────────────────────────────
     if (headBone.current) {
       const target = headTurnY(charName, speakingCharacter)
       headBone.current.rotation.y = THREE.MathUtils.lerp(headBone.current.rotation.y, target, 0.04)
     }
 
-    // Spine breathing swell
+    // ── Spine breathing swell ──────────────────────────────────────────────
     if (spineBone.current) {
       spineBone.current.rotation.x = Math.sin(t * 1.15 + s) * 0.018
     }
@@ -326,17 +368,92 @@ function Character({ url, position, rotation, isActive, charName, speakingCharac
   return <primitive ref={group} object={clonedScene.current} />
 }
 
-// ── Scene ─────────────────────────────────────────────────────────────────────
+// ── Post-processing ───────────────────────────────────────────────────────────
+
+function PostFX() {
+  return (
+    <EffectComposer multisampling={0} disableNormalPass={false}>
+      {/* Anti-aliasing — replaces MSAA, works with post-processing */}
+      <SMAA />
+
+      {/* Ambient occlusion — grounds characters in the scene */}
+      <N8AO
+        aoRadius={2.0}
+        intensity={1.8}
+        quality="medium"
+        halfRes
+        depthAwareUpsampling
+      />
+
+      {/* Depth of field — characters sharp, background gently blurred */}
+      <DepthOfField
+        target={[0, 1.4, 0]}
+        focalLength={0.022}
+        bokehScale={3.2}
+        height={480}
+      />
+
+      {/* Bloom — sun corona, flower highlights, skin catch-lights */}
+      <Bloom
+        luminanceThreshold={0.88}
+        luminanceSmoothing={0.3}
+        intensity={0.65}
+        mipmapBlur
+        radius={0.6}
+      />
+
+      {/* Warm golden-hour colour grade */}
+      <HueSaturation
+        hue={0.03}
+        saturation={0.22}
+        blendFunction={BlendFunction.NORMAL}
+      />
+      <BrightnessContrast brightness={0.03} contrast={0.10} />
+
+      {/* Cinematic vignette */}
+      <Vignette eskil={false} offset={0.28} darkness={0.72} />
+    </EffectComposer>
+  )
+}
+
+// ── Scene assembly ────────────────────────────────────────────────────────────
 
 function SceneContents({ activeCharacter }) {
   return (
     <>
-      <SceneBackground />
+      <SceneSetup />
 
-      <directionalLight position={[10, 16, 6]} intensity={2.4} color="#fff8e8" castShadow
-        shadow-mapSize-width={2048} shadow-mapSize-height={2048} />
-      <ambientLight intensity={0.65} color="#d8eaff" />
-      <hemisphereLight args={['#87ceeb', '#7abb50', 0.55]} />
+      {/* HDR environment — drives PBR skin/fabric sheen on characters */}
+      <Suspense fallback={null}>
+        <Environment preset="sunset" background={false} />
+      </Suspense>
+
+      {/* ── Lighting ── */}
+
+      {/* Key light: warm golden-hour sun (high angle, long soft shadows) */}
+      <directionalLight
+        position={[8, 14, 5]}
+        intensity={2.2}
+        color="#ffd080"
+        castShadow
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        shadow-camera-near={0.5}
+        shadow-camera-far={40}
+        shadow-camera-left={-12}
+        shadow-camera-right={12}
+        shadow-camera-top={12}
+        shadow-camera-bottom={-12}
+        shadow-radius={6}
+        shadow-bias={-0.0003}
+      />
+      {/* Fill light: cool sky-bounce from opposite side */}
+      <directionalLight position={[-5, 8, -3]} intensity={0.45} color="#b8d8ff" />
+      {/* Rim light: subtle warm back-light to separate characters from background */}
+      <directionalLight position={[2, 4, -8]} intensity={0.3} color="#ffc860" />
+
+      <ambientLight intensity={0.35} color="#ffe8c0" />
+      <hemisphereLight args={['#87ceeb', '#7abb50', 0.42]} />
 
       <SchoolPlayground />
 
@@ -354,6 +471,8 @@ function SceneContents({ activeCharacter }) {
           position={[0.7,  1.1, 0.8]}  rotation={[0, -Math.PI * 0.1,  0]}
           isActive={activeCharacter === 'nadine'}    charName="nadine"    speakingCharacter={activeCharacter} />
       </Suspense>
+
+      <PostFX />
     </>
   )
 }
@@ -364,9 +483,17 @@ export default function ThreeScene({ activeCharacter }) {
   return (
     <Canvas
       style={{ position: 'absolute', inset: 0 }}
-      camera={{ position: [0, 1.65, 5.5], fov: 52 }}
-      shadows
-      gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.2 }}
+      camera={{ position: [0, 1.65, 5.5], fov: 52, near: 0.1, far: 200 }}
+      shadows="soft"
+      dpr={[1, 2]}
+      gl={{
+        antialias: false,                              // SMAA handles AA
+        toneMapping: THREE.ACESFilmicToneMapping,
+        toneMappingExposure: 1.35,
+        outputColorSpace: THREE.SRGBColorSpace,
+        powerPreference: 'high-performance',
+      }}
+      performance={{ min: 0.5 }}                       // adaptive pixel-ratio under load
     >
       <SceneContents activeCharacter={activeCharacter} />
     </Canvas>
