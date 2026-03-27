@@ -526,16 +526,16 @@ function SceneContents({ activeCharacter }) {
       <Suspense fallback={null}>
         {/* Foreground group — brought forward, Melissa closer to her friends */}
         <Character url="/assets/models/Melissa.glb"
-          position={[-0.8, 1.1, 3.0]}  rotation={[0,  Math.PI * 0.18, 0]}
+          position={[-0.8, 0.85, 3.0]}  rotation={[0,  Math.PI * 0.18, 0]}
           isActive={activeCharacter === 'melissa'}   charName="melissa"   speakingCharacter={activeCharacter} />
         <Character url="/assets/models/Kelly.glb"
-          position={[0.8,  1.1, 1.8]}  rotation={[0, -Math.PI * 0.14, 0]}
+          position={[0.8,  0.85, 1.8]}  rotation={[0, -Math.PI * 0.14, 0]}
           isActive={activeCharacter === 'kelly'}     charName="kelly"     speakingCharacter={activeCharacter} />
         <Character url="/assets/models/Sthandile.glb"
-          position={[1.7,  1.1, 2.2]}  rotation={[0, -Math.PI * 0.22, 0]}
+          position={[1.7,  0.85, 2.2]}  rotation={[0, -Math.PI * 0.22, 0]}
           isActive={activeCharacter === 'sthandile'} charName="sthandile" speakingCharacter={activeCharacter} />
         <Character url="/assets/models/Nadine.glb"
-          position={[0.2,  1.1, 2.8]}  rotation={[0, -Math.PI * 0.08, 0]}
+          position={[0.2,  0.85, 2.8]}  rotation={[0, -Math.PI * 0.08, 0]}
           isActive={activeCharacter === 'nadine'}    charName="nadine"    speakingCharacter={activeCharacter} />
 
         {/* Background pair — close friends, face-to-face conversation */}
