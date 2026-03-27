@@ -20,7 +20,7 @@ function SceneSetup() {
     scene.background = new THREE.Color('#1a1410')
     // Subtle linear fog — corridor recedes into warm darkness
     scene.fog = new THREE.Fog('#2a1e14', 14, 28)
-    scene.environmentIntensity = 0.5
+    scene.environmentIntensity = 0.15
   }, [scene])
   return null
 }
@@ -43,7 +43,7 @@ function FluorescentPanel({ z, intensity = 1.0 }) {
       {/* Point light below the panel */}
       <pointLight
         position={[0, -0.15, 0]}
-        intensity={2.8 * intensity}
+        intensity={1.6 * intensity}
         color="#fff5e8"
         distance={9}
         decay={2}
@@ -387,7 +387,7 @@ function Character({ url, position, rotation, isActive, charName, speakingCharac
         if (child.material) {
           const upgrade = (m) => {
             const mc = m.clone()
-            mc.envMapIntensity = 0.55
+            mc.envMapIntensity = 0.2
             mc.needsUpdate = true
             return mc
           }
@@ -504,12 +504,12 @@ function SceneContents({ activeCharacter }) {
       {/* ── Lighting ── */}
 
       {/* Warm fill — lower so characters sit in the corridor's natural dimness */}
-      <ambientLight intensity={0.18} color="#ffe8cc" />
+      <ambientLight intensity={0.08} color="#ffe8cc" />
 
       {/* Key light: overhead fluorescent angle, toned down */}
       <directionalLight
         position={[1, 4, 2]}
-        intensity={0.65}
+        intensity={0.45}
         color="#fff5e0"
         castShadow
         shadow-mapSize-width={2048}
@@ -569,7 +569,7 @@ export default function ThreeScene({ activeCharacter }) {
       gl={{
         antialias: false,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.0,
+        toneMappingExposure: 0.82,
         outputColorSpace: THREE.SRGBColorSpace,
         powerPreference: 'high-performance',
       }}
