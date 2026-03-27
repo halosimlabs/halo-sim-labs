@@ -349,6 +349,9 @@ function headTurnY(charName, speaker) {
     kelly:     { melissa: 0.55, nadine: 0.20,  sthandile: 0.12  },
     nadine:    { melissa: 0.40, kelly: -0.18,  sthandile: 0.10  },
     sthandile: { melissa: 0.28, kelly: -0.26,  nadine: -0.12    },
+    // Background pair always turned toward each other
+    nothando:  { senzi: -0.22 },
+    senzi:     { nothando: 0.22 },
   }
   return T[charName]?.[speaker] ?? 0
 }
@@ -524,26 +527,27 @@ function SceneContents({ activeCharacter }) {
       <SchoolCorridor />
 
       <Suspense fallback={null}>
+        {/* Foreground group — brought forward, Melissa closer to her friends */}
         <Character url="/assets/models/Melissa.glb"
-          position={[-2.2, 1.1, 0.5]}  rotation={[0,  Math.PI * 0.2,  0]}
+          position={[-0.8, 1.1, 2.0]}  rotation={[0,  Math.PI * 0.18, 0]}
           isActive={activeCharacter === 'melissa'}   charName="melissa"   speakingCharacter={activeCharacter} />
         <Character url="/assets/models/Kelly.glb"
-          position={[0.5,  1.1, -0.5]} rotation={[0, -Math.PI * 0.15, 0]}
+          position={[0.8,  1.1, 0.8]}  rotation={[0, -Math.PI * 0.14, 0]}
           isActive={activeCharacter === 'kelly'}     charName="kelly"     speakingCharacter={activeCharacter} />
         <Character url="/assets/models/Sthandile.glb"
-          position={[1.8,  1.1, 0]}    rotation={[0, -Math.PI * 0.25, 0]}
+          position={[1.7,  1.1, 1.2]}  rotation={[0, -Math.PI * 0.22, 0]}
           isActive={activeCharacter === 'sthandile'} charName="sthandile" speakingCharacter={activeCharacter} />
         <Character url="/assets/models/Nadine.glb"
-          position={[0.7,  1.1, 0.8]}  rotation={[0, -Math.PI * 0.1,  0]}
+          position={[0.2,  1.1, 1.8]}  rotation={[0, -Math.PI * 0.08, 0]}
           isActive={activeCharacter === 'nadine'}    charName="nadine"    speakingCharacter={activeCharacter} />
 
-        {/* Background students — deeper in the corridor, partially in fog */}
+        {/* Background pair — facing each other, mid-corridor depth */}
         <Character url="/assets/models/Nothando.glb"
-          position={[-1.6, 1.1, -7.5]} rotation={[0,  Math.PI * 0.08, 0]}
-          isActive={false} charName="nothando" speakingCharacter={null} />
+          position={[-1.2, 1.1, -7.5]} rotation={[0, -Math.PI * 0.42, 0]}
+          isActive={false} charName="nothando" speakingCharacter="senzi" />
         <Character url="/assets/models/Senzi.glb"
-          position={[ 1.4, 1.1, -9.0]} rotation={[0, -Math.PI * 0.12, 0]}
-          isActive={false} charName="senzi"    speakingCharacter={null} />
+          position={[ 1.2, 1.1, -7.5]} rotation={[0,  Math.PI * 0.42, 0]}
+          isActive={false} charName="senzi"    speakingCharacter="nothando" />
       </Suspense>
 
       <PostFX />
