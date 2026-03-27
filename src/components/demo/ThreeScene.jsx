@@ -349,9 +349,9 @@ function headTurnY(charName, speaker) {
     kelly:     { melissa: 0.55, nadine: 0.20,  sthandile: 0.12  },
     nadine:    { melissa: 0.40, kelly: -0.18,  sthandile: 0.10  },
     sthandile: { melissa: 0.28, kelly: -0.26,  nadine: -0.12    },
-    // Background pair always turned toward each other
-    nothando:  { senzi: -0.22 },
-    senzi:     { nothando: 0.22 },
+    // Background pair — bodies already face each other, tiny head tilt inward
+    nothando:  { senzi:    0.08 },
+    senzi:     { nothando: 0.08 },
   }
   return T[charName]?.[speaker] ?? 0
 }
@@ -541,12 +541,12 @@ function SceneContents({ activeCharacter }) {
           position={[0.2,  1.1, 1.8]}  rotation={[0, -Math.PI * 0.08, 0]}
           isActive={activeCharacter === 'nadine'}    charName="nadine"    speakingCharacter={activeCharacter} />
 
-        {/* Background pair — facing each other, mid-corridor depth */}
+        {/* Background pair — close friends, face-to-face conversation */}
         <Character url="/assets/models/Nothando.glb"
-          position={[-1.2, 1.1, -7.5]} rotation={[0, -Math.PI * 0.42, 0]}
+          position={[-0.22, 1.1, -7.4]} rotation={[0, -Math.PI * 0.5, 0]}
           isActive={false} charName="nothando" speakingCharacter="senzi" />
         <Character url="/assets/models/Senzi.glb"
-          position={[ 1.2, 1.1, -7.5]} rotation={[0,  Math.PI * 0.42, 0]}
+          position={[ 0.22, 1.1, -7.6]} rotation={[0,  Math.PI * 0.5, 0]}
           isActive={false} charName="senzi"    speakingCharacter="nothando" />
       </Suspense>
 
