@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { useGLTF, useAnimations, Environment } from '@react-three/drei'
+import { useGLTF, useAnimations, Environment, Sky } from '@react-three/drei'
 import {
   EffectComposer,
   Bloom,
@@ -16,7 +16,8 @@ import * as THREE from 'three'
 // ── Static flower data (deterministic golden-angle spiral) ────────────────────
 
 const FLOWER_DATA = (() => {
-  const colors = ['#ff6b6b', '#ffcc00', '#ff9ef7', '#ff7f50', '#fff44f', '#ff85a1', '#ff4da6', '#ffb347']
+  // Muted, natural flower colours — no neons
+  const colors = ['#d4604a', '#c8a832', '#c87ab0', '#c86840', '#e8d458', '#b86888', '#a85090', '#d48830']
   return Array.from({ length: 38 }, (_, i) => {
     const angle = i * 2.399963
     const r = 5 + (i % 7) * 1.1 + (i % 3) * 0.6
@@ -34,51 +35,11 @@ const FLOWER_DATA = (() => {
 function SceneSetup() {
   const { scene } = useThree()
   useEffect(() => {
-    // Warm sky blue background
-    scene.background = new THREE.Color('#8fd4f8')
-    // Subtle environment fog for depth
-    scene.fog = new THREE.FogExp2('#b8dff5', 0.022)
-    // Control HDR environment contribution
-    scene.environmentIntensity = 0.85
+    // Sky component handles the background — fog color matches horizon haze
+    scene.fog = new THREE.FogExp2('#c8d8e8', 0.016)
+    scene.environmentIntensity = 0.75
   }, [scene])
   return null
-}
-
-// ── Sun ───────────────────────────────────────────────────────────────────────
-
-function Sun() {
-  return (
-    <group position={[14, 20, -32]}>
-      {/* Core disc */}
-      <mesh>
-        <sphereGeometry args={[2.0, 16, 16]} />
-        <meshBasicMaterial color="#fff9c4" />
-      </mesh>
-      {/* Inner glow halo */}
-      <mesh>
-        <sphereGeometry args={[3.2, 16, 16]} />
-        <meshBasicMaterial color="#fff5a0" transparent opacity={0.18} depthWrite={false} />
-      </mesh>
-      {/* Outer glow */}
-      <mesh>
-        <sphereGeometry args={[4.4, 16, 16]} />
-        <meshBasicMaterial color="#ffe060" transparent opacity={0.07} depthWrite={false} />
-      </mesh>
-    </group>
-  )
-}
-
-// ── Clouds ────────────────────────────────────────────────────────────────────
-
-function Cloud({ position, scale = 1 }) {
-  return (
-    <group position={position} scale={scale}>
-      <mesh><sphereGeometry args={[1.0, 8, 6]} /><meshStandardMaterial color="#ffffff" roughness={1} envMapIntensity={0} /></mesh>
-      <mesh position={[1.2, 0.15, 0]}><sphereGeometry args={[0.75, 8, 6]} /><meshStandardMaterial color="#f5f5f5" roughness={1} envMapIntensity={0} /></mesh>
-      <mesh position={[-1.0, 0.05, 0]}><sphereGeometry args={[0.65, 8, 6]} /><meshStandardMaterial color="#f8f8f8" roughness={1} envMapIntensity={0} /></mesh>
-      <mesh position={[0.3, 0.55, 0]}><sphereGeometry args={[0.58, 8, 6]} /><meshStandardMaterial color="#ffffff" roughness={1} envMapIntensity={0} /></mesh>
-    </group>
-  )
 }
 
 // ── Flower ────────────────────────────────────────────────────────────────────
@@ -104,20 +65,28 @@ function Flower({ x, z, color, scale }) {
 
 // ── Tree ──────────────────────────────────────────────────────────────────────
 
-function Tree({ position, height = 3.8, cr = 1.7, lc = '#3d8c2a' }) {
+function Tree({ position, height = 3.8, cr = 1.7, lc = '#3a6824' }) {
+  // Use slightly flattened, offset spheres so foliage reads as a canopy not a lollipop
   return (
     <group position={position}>
       <mesh position={[0, height / 2, 0]} castShadow receiveShadow>
-        <cylinderGeometry args={[0.14, 0.22, height, 8]} />
-        <meshStandardMaterial color="#6b4423" roughness={0.95} metalness={0.0} />
+        <cylinderGeometry args={[0.13, 0.24, height, 7]} />
+        <meshStandardMaterial color="#5a3818" roughness={0.97} metalness={0.0} />
       </mesh>
-      <mesh position={[0, height + cr * 0.45, 0]} castShadow receiveShadow>
-        <sphereGeometry args={[cr, 10, 8]} />
-        <meshStandardMaterial color={lc} roughness={0.95} metalness={0.0} />
+      {/* Main canopy — slightly flattened */}
+      <mesh position={[0, height + cr * 0.38, 0]} scale={[1, 0.72, 1]} castShadow receiveShadow>
+        <sphereGeometry args={[cr, 9, 7]} />
+        <meshStandardMaterial color={lc} roughness={0.97} metalness={0.0} />
       </mesh>
-      <mesh position={[0.35, height + cr * 0.82, 0.25]} castShadow>
-        <sphereGeometry args={[cr * 0.62, 8, 7]} />
-        <meshStandardMaterial color="#4aaa33" roughness={0.95} metalness={0.0} />
+      {/* Side cluster — breaks up the silhouette */}
+      <mesh position={[cr * 0.55, height + cr * 0.7, cr * 0.3]} scale={[1, 0.68, 1]} castShadow>
+        <sphereGeometry args={[cr * 0.58, 8, 6]} />
+        <meshStandardMaterial color="#385c20" roughness={0.97} metalness={0.0} />
+      </mesh>
+      {/* Back cluster */}
+      <mesh position={[-cr * 0.4, height + cr * 0.75, -cr * 0.35]} scale={[1, 0.65, 1]} castShadow>
+        <sphereGeometry args={[cr * 0.52, 8, 6]} />
+        <meshStandardMaterial color="#426828" roughness={0.97} metalness={0.0} />
       </mesh>
     </group>
   )
@@ -127,49 +96,43 @@ function Tree({ position, height = 3.8, cr = 1.7, lc = '#3d8c2a' }) {
 
 function Bush({ x, z }) {
   return (
-    <group position={[x, 0.38, z]}>
-      <mesh castShadow><sphereGeometry args={[0.62, 8, 6]} /><meshStandardMaterial color="#3a7a28" roughness={0.95} /></mesh>
-      <mesh position={[0.52, 0.08, 0]} castShadow><sphereGeometry args={[0.48, 8, 6]} /><meshStandardMaterial color="#4a8a32" roughness={0.95} /></mesh>
-      <mesh position={[-0.44, 0.05, 0.18]} castShadow><sphereGeometry args={[0.46, 8, 6]} /><meshStandardMaterial color="#3d7525" roughness={0.95} /></mesh>
+    <group position={[x, 0.32, z]}>
+      <mesh scale={[1, 0.7, 1]} castShadow><sphereGeometry args={[0.62, 8, 6]} /><meshStandardMaterial color="#355c22" roughness={0.97} /></mesh>
+      <mesh position={[0.5, 0.06, 0.1]} scale={[1, 0.68, 1]} castShadow><sphereGeometry args={[0.46, 8, 6]} /><meshStandardMaterial color="#3d6828" roughness={0.97} /></mesh>
+      <mesh position={[-0.42, 0.04, 0.15]} scale={[1, 0.65, 1]} castShadow><sphereGeometry args={[0.44, 8, 6]} /><meshStandardMaterial color="#304e1c" roughness={0.97} /></mesh>
     </group>
   )
 }
 
 // ── Playground ────────────────────────────────────────────────────────────────
 
-const FENCE_COLORS = ['#e84040', '#f5a020', '#3399dd', '#44bb44', '#e84040', '#f5a020']
+// Weathered dark-green painted steel — typical SA school fence
+const FENCE_POST_COLOR = '#2a3d28'
+const FENCE_RAIL_COLOR = '#243322'
 
 function SchoolPlayground() {
   return (
     <>
-      {/* Grass — slightly rough PBR for better light interaction */}
+      {/* Grass — muted, realistic green */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[80, 80]} />
-        <meshStandardMaterial color="#52a035" roughness={1.0} metalness={0.0} />
+        <meshStandardMaterial color="#456828" roughness={1.0} metalness={0.0} />
       </mesh>
-      {/* Brighter patch under characters */}
+      {/* Slightly lighter patch under characters — sun dapple */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.002, 0]} receiveShadow>
         <planeGeometry args={[9, 7]} />
-        <meshStandardMaterial color="#62b842" roughness={0.98} metalness={0.0} />
+        <meshStandardMaterial color="#4e7430" roughness={0.98} metalness={0.0} />
       </mesh>
 
-      <Sun />
-
-      <Cloud position={[-10, 13, -26]} scale={1.4} />
-      <Cloud position={[6,   15, -30]} scale={1.1} />
-      <Cloud position={[17,  12, -22]} scale={1.0} />
-      <Cloud position={[-2,  14, -34]} scale={1.3} />
-      <Cloud position={[25,  11, -20]} scale={0.85} />
-
-      {/* Trees */}
-      <Tree position={[-9,   0, -10]} height={4.2} cr={1.9} lc="#3d8c2a" />
-      <Tree position={[-6.5, 0, -13]} height={5.5} cr={2.2} lc="#2e7a20" />
-      <Tree position={[-13,  0,  -6]} height={3.4} cr={1.5} lc="#529c38" />
-      <Tree position={[9,    0, -11]} height={4.0} cr={1.8} lc="#4a9e32" />
-      <Tree position={[11.5, 0,  -7]} height={3.8} cr={1.6} lc="#3a8828" />
-      <Tree position={[7,    0, -13]} height={5.0} cr={2.0} lc="#3d8c2a" />
-      <Tree position={[-14,  0,  -2]} height={3.2} cr={1.4} lc="#459930" />
-      <Tree position={[14,   0,  -2]} height={3.6} cr={1.7} lc="#3d8c2a" />
+      {/* Trees — muted olive/forest greens */}
+      <Tree position={[-9,   0, -10]} height={4.2} cr={1.9} lc="#3a6824" />
+      <Tree position={[-6.5, 0, -13]} height={5.5} cr={2.2} lc="#2e5a1c" />
+      <Tree position={[-13,  0,  -6]} height={3.4} cr={1.5} lc="#446030" />
+      <Tree position={[9,    0, -11]} height={4.0} cr={1.8} lc="#3e6826" />
+      <Tree position={[11.5, 0,  -7]} height={3.8} cr={1.6} lc="#355820" />
+      <Tree position={[7,    0, -13]} height={5.0} cr={2.0} lc="#3a6424" />
+      <Tree position={[-14,  0,  -2]} height={3.2} cr={1.4} lc="#3c6228" />
+      <Tree position={[14,   0,  -2]} height={3.6} cr={1.7} lc="#385e22" />
 
       {/* Bushes */}
       <Bush x={-5.5} z={-7} />
@@ -206,16 +169,20 @@ function SchoolPlayground() {
         </group>
       ))}
 
-      {/* Colourful fence */}
+      {/* Dark-green painted steel fence — typical SA school */}
       {Array.from({ length: 30 }, (_, i) => (
         <mesh key={i} position={[i * 1.0 - 14.5, 0.75, -10]} castShadow>
-          <boxGeometry args={[0.07, 1.5, 0.07]} />
-          <meshStandardMaterial color={FENCE_COLORS[i % FENCE_COLORS.length]} roughness={0.55} metalness={0.1} />
+          <boxGeometry args={[0.06, 1.5, 0.06]} />
+          <meshStandardMaterial color={FENCE_POST_COLOR} roughness={0.7} metalness={0.25} />
         </mesh>
       ))}
-      <mesh position={[0, 1.5, -10]}>
-        <boxGeometry args={[30, 0.07, 0.07]} />
-        <meshStandardMaterial color="#e0c080" roughness={0.55} />
+      <mesh position={[0, 1.38, -10]}>
+        <boxGeometry args={[30, 0.05, 0.05]} />
+        <meshStandardMaterial color={FENCE_RAIL_COLOR} roughness={0.7} metalness={0.25} />
+      </mesh>
+      <mesh position={[0, 0.55, -10]}>
+        <boxGeometry args={[30, 0.05, 0.05]} />
+        <meshStandardMaterial color={FENCE_RAIL_COLOR} roughness={0.7} metalness={0.25} />
       </mesh>
 
       {/* Wooden bench */}
@@ -392,16 +359,16 @@ function PostFX() {
         radius={0.6}
       />
 
-      {/* Warm golden-hour colour grade */}
+      {/* Subtle warm colour grade — keep it filmic, not saturated */}
       <HueSaturation
-        hue={0.03}
-        saturation={0.22}
+        hue={0.01}
+        saturation={0.06}
         blendFunction={BlendFunction.NORMAL}
       />
-      <BrightnessContrast brightness={0.03} contrast={0.10} />
+      <BrightnessContrast brightness={0.02} contrast={0.12} />
 
       {/* Cinematic vignette */}
-      <Vignette eskil={false} offset={0.28} darkness={0.72} />
+      <Vignette eskil={false} offset={0.32} darkness={0.62} />
     </EffectComposer>
   )
 }
@@ -412,6 +379,16 @@ function SceneContents({ activeCharacter }) {
   return (
     <>
       <SceneSetup />
+
+      {/* Physically-based atmospheric sky — replaces flat colour background */}
+      <Sky
+        distance={450}
+        sunPosition={[8, 14, 5]}
+        turbidity={9}
+        rayleigh={1.4}
+        mieCoefficient={0.004}
+        mieDirectionalG={0.76}
+      />
 
       {/* HDR environment — drives PBR skin/fabric sheen on characters */}
       <Suspense fallback={null}>
