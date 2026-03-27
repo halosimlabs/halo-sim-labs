@@ -43,7 +43,7 @@ function FluorescentPanel({ z, intensity = 1.0 }) {
       {/* Point light below the panel */}
       <pointLight
         position={[0, -0.15, 0]}
-        intensity={6.0 * intensity}
+        intensity={2.8 * intensity}
         color="#fff5e8"
         distance={9}
         decay={2}
@@ -502,12 +502,12 @@ function SceneContents({ activeCharacter }) {
       {/* ── Lighting ── */}
 
       {/* Warm fill — lower so characters sit in the corridor's natural dimness */}
-      <ambientLight intensity={0.28} color="#ffe8cc" />
+      <ambientLight intensity={0.18} color="#ffe8cc" />
 
       {/* Key light: overhead fluorescent angle, toned down */}
       <directionalLight
         position={[1, 4, 2]}
-        intensity={0.92}
+        intensity={0.65}
         color="#fff5e0"
         castShadow
         shadow-mapSize-width={2048}
