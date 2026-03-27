@@ -564,7 +564,7 @@ export default function ThreeScene({ activeCharacter }) {
       gl={{
         antialias: false,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 0.95,
+        toneMappingExposure: 1.1,
         outputColorSpace: THREE.SRGBColorSpace,
         powerPreference: 'high-performance',
       }}
