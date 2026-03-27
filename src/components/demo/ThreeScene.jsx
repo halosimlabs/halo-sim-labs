@@ -43,7 +43,7 @@ function FluorescentPanel({ z, intensity = 1.0 }) {
       {/* Point light below the panel */}
       <pointLight
         position={[0, -0.15, 0]}
-        intensity={1.6 * intensity}
+        intensity={2.2 * intensity}
         color="#fff5e8"
         distance={9}
         decay={2}
@@ -499,12 +499,12 @@ function SceneContents({ activeCharacter }) {
       {/* ── Lighting ── */}
 
       {/* Warm fill — lower so characters sit in the corridor's natural dimness */}
-      <ambientLight intensity={0.08} color="#ffe8cc" />
+      <ambientLight intensity={0.25} color="#ffe8cc" />
 
       {/* Key light: overhead fluorescent angle, toned down */}
       <directionalLight
         position={[1, 4, 2]}
-        intensity={0.45}
+        intensity={0.55}
         color="#fff5e0"
         castShadow
         shadow-mapSize-width={2048}
@@ -564,7 +564,7 @@ export default function ThreeScene({ activeCharacter }) {
       gl={{
         antialias: false,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 0.82,
+        toneMappingExposure: 0.95,
         outputColorSpace: THREE.SRGBColorSpace,
         powerPreference: 'high-performance',
       }}
