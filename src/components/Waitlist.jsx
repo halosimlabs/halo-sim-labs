@@ -1,8 +1,48 @@
 /* Section — Waitlist / Pilot Request */
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
+
+// ── Update this number as interest grows ──
+const SCHOOLS_COUNT = 20
+
+function useCountUp(target, duration = 1600) {
+  const [value, setValue] = useState(0)
+  const [triggered, setTriggered] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !triggered) {
+          setTriggered(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [triggered])
+
+  useEffect(() => {
+    if (!triggered) return
+    const startTime = performance.now()
+    const tick = (now) => {
+      const progress = Math.min((now - startTime) / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setValue(Math.round(eased * target))
+      if (progress < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
+  }, [triggered, target, duration])
+
+  return { value, ref }
+}
 
 export default function Waitlist() {
-  const [mode, setMode] = useState('waitlist') // 'waitlist' | 'pilot'
+  const { value: schoolCount, ref: countRef } = useCountUp(SCHOOLS_COUNT, 2800)
+  const [mode, setMode] = useState('pilot') // 'pilot' | 'waitlist'
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [role, setRole] = useState('')
@@ -131,6 +171,38 @@ export default function Waitlist() {
                 info@halosimlabs.com
               </a>
             </div>
+
+            {/* Schools count-up */}
+            <div
+              ref={countRef}
+              style={{
+                marginTop: 40,
+                paddingTop: 32,
+                borderTop: '1px solid rgba(255,255,255,0.07)',
+              }}
+            >
+              <div style={{
+                fontFamily: 'Sora, sans-serif',
+                fontSize: 'clamp(3rem, 6vw, 4.5rem)',
+                fontWeight: 800,
+                lineHeight: 1,
+                letterSpacing: '-0.04em',
+                color: '#F5F5F5',
+                fontVariantNumeric: 'tabular-nums',
+                marginBottom: 10,
+              }}>
+                {schoolCount}
+              </div>
+              <p style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.85rem',
+                color: 'rgba(245,245,245,0.35)',
+                lineHeight: 1.6,
+                maxWidth: 260,
+              }}>
+                schools have expressed interest in bringing Halo Sim Labs to their students.
+              </p>
+            </div>
           </div>
 
           {/* Right — form */}
@@ -195,8 +267,8 @@ export default function Waitlist() {
                   }}
                 >
                   {[
-                    { key: 'waitlist', label: 'Join Waitlist' },
                     { key: 'pilot',    label: 'Pilot Request' },
+                    { key: 'waitlist', label: 'Join Waitlist' },
                   ].map(({ key, label }) => (
                     <button
                       key={key}

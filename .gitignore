@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.env.local
+.claude/
+.vscode/
+remove-bg.mjs
+public/assets/environment/
+halo characters/

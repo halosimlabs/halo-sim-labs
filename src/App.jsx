@@ -5,6 +5,7 @@ import Hero from './components/Hero'
 import WhyItMatters from './components/WhyItMatters'
 import WhatIsHaloSim from './components/WhatIsHaloSim'
 import Inclusive from './components/Inclusive'
+import StatsSection from './components/StatsSection'
 import Waitlist from './components/Waitlist'
 import Footer from './components/Footer'
 import AccessibilityBar from './components/AccessibilityBar'
@@ -45,6 +46,7 @@ function App() {
         <Navbar />
         <main id="main-content">
           <Hero />
+          <StatsSection />
           <WhyItMatters />
           <WhatIsHaloSim />
           <Inclusive />

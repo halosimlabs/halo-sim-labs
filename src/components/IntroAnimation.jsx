@@ -49,29 +49,6 @@ export default function IntroAnimation({ onComplete }) {
         pointerEvents: phase === 'exit' ? 'none' : 'all',
       }}
     >
-      {/* Expanding halo rings */}
-      <svg
-        aria-hidden="true"
-        style={{ position: 'absolute', width: 400, height: 400, opacity: 0.7 }}
-        viewBox="0 0 400 400"
-      >
-        {[70, 110, 150].map((r, i) => (
-          <circle
-            key={r}
-            cx="200"
-            cy="200"
-            r={r}
-            fill="none"
-            stroke="rgba(255,255,255,0.06)"
-            strokeWidth="1"
-            style={{
-              animation: `haloRing 2.8s ease-out ${i * 0.4}s both`,
-              transformOrigin: '200px 200px',
-            }}
-          />
-        ))}
-      </svg>
-
       {/* Logo */}
       <div style={{
         position: 'relative',

@@ -102,9 +102,10 @@ export default function WhyItMatters() {
             lineHeight: 1.85,
           }}>
             Students face emotional and social challenges every day, yet practical emotional
-            skills are rarely taught in ways that feel real or experiential. Halo Sim Labs
-            explores how immersive learning experiences could help students better understand
-            empathy, communication, and emotional awareness.
+            skills are rarely taught in ways that feel real or experiential.
+            Halo Sim Labs delivers immersive learning experiences that help students build
+            empathy, strengthen communication, and develop emotional awareness through
+            realistic, interactive scenarios.
           </p>
         </div>
       </div>

@@ -61,7 +61,7 @@ h1, h2, h3, h4 {
 }
 
 .section {
-  padding: 120px 0;
+  padding: 80px 0;
 }
 
 /* ─── Buttons ─── */
@@ -212,7 +212,7 @@ h1, h2, h3, h4 {
 
 /* ─── Mobile ─── */
 @media (max-width: 768px) {
-  .section { padding: 72px 0; }
+  .section { padding: 56px 0; }
   .container { padding: 0 20px; }
 }
 

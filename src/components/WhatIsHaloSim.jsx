@@ -55,10 +55,9 @@ export default function WhatIsHaloSim() {
                 color: '#C9C9C9',
                 lineHeight: 1.85,
               }}>
-                Halo Sim Labs is focused on simulation-based emotional learning.
-                The idea is to create guided digital experiences where students can
-                engage with realistic social and emotional situations and reflect
-                on the choices they make.
+                Halo Sim Labs delivers simulation-based emotional learning through guided
+                digital experiences where students engage with realistic social and emotional
+                situations and reflect on the choices they make.
               </p>
 
               <p className="reveal reveal-delay-2" style={{
@@ -67,7 +66,7 @@ export default function WhatIsHaloSim() {
                 lineHeight: 1.85,
               }}>
                 Rather than memorizing definitions of empathy or emotional intelligence,
-                learners would interact with scenarios that encourage reflection,
+                learners interact with immersive scenarios that encourage reflection,
                 perspective-taking, and thoughtful decision-making.
               </p>
 
@@ -76,8 +75,8 @@ export default function WhatIsHaloSim() {
                 color: 'rgba(245,245,245,0.45)',
                 lineHeight: 1.85,
               }}>
-                The goal is to build tools that help students practice emotional
-                intelligence in meaningful ways.
+                The platform is designed to help students actively practice emotional
+                intelligence in meaningful, real-world contexts.
               </p>
             </div>
           </div>
