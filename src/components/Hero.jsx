@@ -316,23 +316,23 @@ export default function Hero() {
 
         .hs-stats-mobile {
           display: flex !important;
-          flex-wrap: wrap;
-          gap: 20px 0;
+          flex-wrap: nowrap;
+          gap: 0;
           margin-top: 28px;
         }
 
         .hs-stats-mobile .hs-stat {
-          flex: 1 1 45%;
+          flex: 1 1 0;
           align-items: flex-start;
-          padding: 0 8px 0 0;
+          padding: 0 4px 0 0;
         }
 
         .hs-stats-mobile .hs-stat-num {
-          font-size: clamp(1.3rem, 5vw, 1.7rem);
+          font-size: clamp(0.95rem, 3.8vw, 1.3rem);
         }
 
         .hs-stats-mobile .hs-stat-label {
-          font-size: 0.72rem;
+          font-size: 0.6rem;
           text-align: left;
         }
       }
