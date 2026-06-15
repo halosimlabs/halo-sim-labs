@@ -274,12 +274,13 @@ export default function Hero() {
         #hero {
           min-height: 100vh !important;
           padding-top: 70px !important;
-          align-items: center !important;
+          align-items: flex-start !important;
         }
 
         .hero-inner {
-          align-items: flex-end;
+          align-items: center;
           gap: 12px;
+          margin-top: 24px;
         }
 
         .hero-text {
@@ -301,7 +302,7 @@ export default function Hero() {
         .hero-character {
           width: 44%;
           max-width: 230px;
-          align-self: flex-end;
+          align-self: center;
         }
 
         .hs-stats-desktop { display: none !important; }
