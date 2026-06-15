@@ -81,8 +81,8 @@ export default function Hero() {
               We teach emotional<br />intelligence.
             </h1>
 
-            {/* Stats — below headings */}
-            <div className="hs-stats-row" ref={statsRef}>
+            {/* Desktop stats — hidden on mobile */}
+            <div className="hs-stats-row hs-stats-desktop" ref={statsRef}>
               {heroStats.map((s, i) => (
                 <StatItem key={i} {...s} started={statsStarted} delay={i * 150} />
               ))}
@@ -96,6 +96,13 @@ export default function Hero() {
               className="hero-character-img"
             />
           </div>
+        </div>
+
+        {/* Mobile stats — below text+character, hidden on desktop */}
+        <div className="hs-stats-row hs-stats-mobile">
+          {heroStats.map((s, i) => (
+            <StatItem key={i} {...s} started={statsStarted} delay={i * 150} />
+          ))}
         </div>
       </div>
 
@@ -260,58 +267,65 @@ export default function Hero() {
         animation: fadeUp 0.9s 0.2s ease both;
       }
 
+      .hs-stats-mobile { display: none; }
+
       @media (max-width: 768px) {
         #hero {
           min-height: unset !important;
-          padding-top: 80px !important;
-          padding-bottom: 32px !important;
+          padding-top: 90px !important;
+          padding-bottom: 40px !important;
           align-items: flex-start !important;
         }
 
         .hero-inner {
           align-items: flex-end;
-          gap: 16px;
+          gap: 12px;
         }
 
         .hero-text {
-          max-width: 100%;
+          max-width: 55%;
           text-align: left;
         }
 
         .hero-eyebrow {
           font-size: 0.52rem;
           letter-spacing: 0.1em;
-          margin-bottom: 16px;
+          margin-bottom: 14px;
         }
 
         .hero-h1 {
-          font-size: clamp(1.15rem, 4.8vw, 1.6rem) !important;
+          font-size: clamp(1.1rem, 4.5vw, 1.5rem) !important;
           margin-bottom: 8px !important;
         }
 
         .hero-character {
-          width: 40%;
-          max-width: 200px;
+          width: 42%;
+          max-width: 220px;
           align-self: flex-end;
         }
 
-        .hs-stats-row {
-          margin-top: 28px;
+        .hs-stats-desktop { display: none !important; }
+
+        .hs-stats-mobile {
+          display: flex;
           flex-wrap: wrap;
-          gap: 16px 0;
+          gap: 20px 0;
+          margin-top: 36px;
         }
 
-        .hs-stat {
-          flex: 1 1 40%;
+        .hs-stats-mobile .hs-stat {
+          flex: 1 1 45%;
+          align-items: flex-start;
           padding: 0 8px 0 0;
         }
 
-        .hs-stat-num {
-          font-size: clamp(1rem, 4vw, 1.3rem) !important;
+        .hs-stats-mobile .hs-stat-num {
+          font-size: clamp(1.2rem, 5vw, 1.6rem);
         }
 
-        .hs-stat-label {
-          font-size: 0.65rem;
+        .hs-stats-mobile .hs-stat-label {
+          font-size: 0.7rem;
+          text-align: left;
         }
       }
     `}</style>
