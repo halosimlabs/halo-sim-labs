@@ -262,18 +262,25 @@ export default function Hero() {
       @media (max-width: 768px) {
         .hero-inner {
           flex-direction: column;
-          align-items: flex-start;
+          align-items: center;
+          gap: 0;
           padding-bottom: 0;
         }
 
         .hero-text {
           max-width: 100%;
+          text-align: center;
+        }
+
+        .hs-stats-row {
+          margin-top: 28px;
         }
 
         .hero-character {
-          width: 80%;
-          max-width: 340px;
+          width: 72%;
+          max-width: 300px;
           align-self: center;
+          margin-top: 16px;
         }
       }
     `}</style>

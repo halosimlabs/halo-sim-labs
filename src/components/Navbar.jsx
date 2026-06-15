@@ -93,7 +93,7 @@ export default function Navbar({ onOpenDemo }) {
         </ul>
 
         {/* Right CTA */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 40 }}>
+        <div className="nav-cta" style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 40 }}>
           <button onClick={onOpenDemo} style={{
             fontSize: '0.85rem',
             padding: '10px 20px',
@@ -217,6 +217,7 @@ export default function Navbar({ onOpenDemo }) {
       <style>{`
         @media (max-width: 860px) {
           .nav-links { display: none !important; }
+          .nav-cta { display: none !important; }
           .hamburger-btn { display: flex !important; }
         }
       `}</style>
