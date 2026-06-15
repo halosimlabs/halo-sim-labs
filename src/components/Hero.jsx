@@ -57,6 +57,7 @@ export default function Hero() {
     <>
     <section
       id="hero"
+      ref={statsRef}
       style={{
         minHeight: '100vh',
         display: 'flex',
@@ -82,7 +83,7 @@ export default function Hero() {
             </h1>
 
             {/* Desktop stats — hidden on mobile */}
-            <div className="hs-stats-row hs-stats-desktop" ref={statsRef}>
+            <div className="hs-stats-row hs-stats-desktop">
               {heroStats.map((s, i) => (
                 <StatItem key={i} {...s} started={statsStarted} delay={i * 150} />
               ))}
