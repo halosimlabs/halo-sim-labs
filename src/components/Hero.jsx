@@ -318,7 +318,7 @@ export default function Hero() {
           display: flex !important;
           flex-wrap: nowrap;
           gap: 0;
-          margin-top: 28px;
+          margin-top: 44px;
         }
 
         .hs-stats-mobile .hs-stat {
