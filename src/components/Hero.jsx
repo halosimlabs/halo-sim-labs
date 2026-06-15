@@ -68,35 +68,35 @@ export default function Hero() {
       }}
     >
 
-      <div className="container hero-inner">
-        {/* Left: Text + Stats */}
-        <div className="hero-text">
-          <span className="hero-eyebrow">
-            Simulation-Based Learning
-          </span>
+      <div className="container hero-wrap">
+        {/* Text + Character row */}
+        <div className="hero-inner">
+          <div className="hero-text">
+            <span className="hero-eyebrow">
+              Simulation-Based Learning
+            </span>
+            <h1 className="hero-h1 hero-h1-dim" style={{ animation: 'fadeUp 0.7s 0.1s ease both' }}>
+              Schools teach theory.
+            </h1>
+            <h1 className="hero-h1" style={{ animation: 'fadeUp 0.7s 0.15s ease both' }}>
+              We teach emotional<br />intelligence.
+            </h1>
+          </div>
 
-          <h1 className="hero-h1 hero-h1-dim" style={{ animation: 'fadeUp 0.7s 0.1s ease both' }}>
-            Schools teach theory.
-          </h1>
-          <h1 className="hero-h1" style={{ animation: 'fadeUp 0.7s 0.15s ease both' }}>
-            We teach emotional<br />intelligence.
-          </h1>
-
-          {/* Inline stats */}
-          <div className="hs-stats-row" ref={statsRef}>
-            {heroStats.map((s, i) => (
-              <StatItem key={i} {...s} started={statsStarted} delay={i * 150} />
-            ))}
+          <div className="hero-character">
+            <img
+              src="/assets/characters/student-character.png"
+              alt="Student character"
+              className="hero-character-img"
+            />
           </div>
         </div>
 
-        {/* Right: Character */}
-        <div className="hero-character">
-          <img
-            src="/assets/characters/student-character.png"
-            alt="Student character"
-            className="hero-character-img"
-          />
+        {/* Stats row — below on all screen sizes */}
+        <div className="hs-stats-row" ref={statsRef}>
+          {heroStats.map((s, i) => (
+            <StatItem key={i} {...s} started={statsStarted} delay={i * 150} />
+          ))}
         </div>
       </div>
 
@@ -164,10 +164,13 @@ export default function Hero() {
     </section>
 
     <style>{`
-      .hero-inner {
+      .hero-wrap {
         position: relative;
         z-index: 2;
         width: 100%;
+      }
+
+      .hero-inner {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -177,7 +180,7 @@ export default function Hero() {
       .hero-text {
         flex: 1 1 0;
         max-width: 580px;
-        text-align: center;
+        text-align: left;
       }
 
       .hero-eyebrow {
@@ -188,7 +191,7 @@ export default function Hero() {
         text-transform: uppercase;
         color: rgba(245, 245, 245, 0.35);
         display: block;
-        margin-bottom: 40px;
+        margin-bottom: 24px;
         animation: fadeUp 0.7s ease both;
       }
 
@@ -208,7 +211,7 @@ export default function Hero() {
       .hs-stats-row {
         display: flex;
         gap: 0;
-        margin-top: 48px;
+        margin-top: 40px;
         animation: fadeUp 0.7s 0.3s ease both;
       }
 
@@ -216,10 +219,12 @@ export default function Hero() {
         flex: 1;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        padding: 20px 12px 0;
+        align-items: flex-start;
+        padding: 0 24px 0 0;
         gap: 5px;
       }
+
+      .hs-stat:last-child { padding-right: 0; }
 
       .hs-stat-num {
         font-family: 'Sora', sans-serif;
@@ -234,7 +239,6 @@ export default function Hero() {
         font-family: 'Inter', sans-serif;
         font-size: 0.72rem;
         color: rgba(245, 245, 245, 0.38);
-        text-align: center;
         line-height: 1.4;
       }
 
@@ -261,54 +265,49 @@ export default function Hero() {
 
       @media (max-width: 768px) {
         .hero-inner {
-          flex-direction: row;
-          align-items: center;
+          align-items: flex-end;
           gap: 16px;
         }
 
         .hero-text {
-          flex: 1 1 0;
+          max-width: 100%;
           text-align: left;
         }
 
         .hero-eyebrow {
-          font-size: 0.55rem;
-          margin-bottom: 20px;
+          font-size: 0.52rem;
+          letter-spacing: 0.1em;
+          margin-bottom: 16px;
         }
 
         .hero-h1 {
-          font-size: clamp(1.1rem, 4.5vw, 1.5rem) !important;
+          font-size: clamp(1.15rem, 4.8vw, 1.6rem) !important;
           margin-bottom: 8px !important;
         }
 
+        .hero-character {
+          width: 40%;
+          max-width: 200px;
+          align-self: flex-end;
+        }
+
         .hs-stats-row {
-          margin-top: 20px;
+          margin-top: 28px;
           flex-wrap: wrap;
-          gap: 8px 0;
+          gap: 16px 0;
         }
 
         .hs-stat {
-          flex: 1 1 45%;
-          padding: 12px 4px 0;
-          align-items: flex-start;
+          flex: 1 1 40%;
+          padding: 0 8px 0 0;
         }
 
         .hs-stat-num {
-          font-size: clamp(0.95rem, 3.5vw, 1.2rem) !important;
+          font-size: clamp(1rem, 4vw, 1.3rem) !important;
         }
 
         .hs-stat-label {
-          font-size: 0.62rem;
-          max-width: none;
-          text-align: left;
-        }
-
-        .hero-character {
-          flex: 0 0 auto;
-          width: 38%;
-          max-width: 180px;
-          align-self: flex-end;
-          margin-top: 0;
+          font-size: 0.65rem;
         }
       }
     `}</style>

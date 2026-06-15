@@ -93,7 +93,7 @@ export default function Navbar({ onOpenDemo }) {
           ))}
         </ul>
 
-        {/* Right CTA */}
+        {/* Right CTA — hidden on mobile */}
         <div className="nav-cta" style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 40 }}>
           <button onClick={onOpenDemo} style={{
             fontSize: '0.85rem',
@@ -116,40 +116,42 @@ export default function Navbar({ onOpenDemo }) {
           <a href="#waitlist" className="btn-primary" style={{ fontSize: '0.85rem', padding: '10px 20px' }}>
             Join the Waitlist
           </a>
-          <button
-            className="hamburger-btn"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-menu"
-            style={{
-              display: 'none',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: 6,
-              flexDirection: 'column',
-              gap: 5,
-            }}
-          >
-            {[0, 1, 2].map(i => (
-              <span key={i} style={{
-                display: 'block',
-                width: 20,
-                height: 1.5,
-                background: 'rgba(245,245,245,0.75)',
-                borderRadius: 1,
-                transition: 'transform 0.3s ease, opacity 0.3s ease',
-                transform: mobileOpen
-                  ? i === 0 ? 'rotate(45deg) translate(4.5px, 4.5px)'
-                    : i === 2 ? 'rotate(-45deg) translate(4.5px, -4.5px)'
-                    : 'none'
-                  : 'none',
-                opacity: mobileOpen && i === 1 ? 0 : 1,
-              }} />
-            ))}
-          </button>
         </div>
+
+        {/* Hamburger — mobile only */}
+        <button
+          className="hamburger-btn"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-menu"
+          style={{
+            display: 'none',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 6,
+            flexDirection: 'column',
+            gap: 5,
+          }}
+        >
+          {[0, 1, 2].map(i => (
+            <span key={i} style={{
+              display: 'block',
+              width: 20,
+              height: 1.5,
+              background: 'rgba(245,245,245,0.75)',
+              borderRadius: 1,
+              transition: 'transform 0.3s ease, opacity 0.3s ease',
+              transform: mobileOpen
+                ? i === 0 ? 'rotate(45deg) translate(4.5px, 4.5px)'
+                  : i === 2 ? 'rotate(-45deg) translate(4.5px, -4.5px)'
+                  : 'none'
+                : 'none',
+              opacity: mobileOpen && i === 1 ? 0 : 1,
+            }} />
+          ))}
+        </button>
       </div>
 
       {/* Mobile drawer */}
