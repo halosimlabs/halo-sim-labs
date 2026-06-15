@@ -68,8 +68,7 @@ export default function Hero() {
       }}
     >
 
-      <div className="container hero-wrap">
-        {/* Text + Character row */}
+      <div className="container">
         <div className="hero-inner">
           <div className="hero-text">
             <span className="hero-eyebrow">
@@ -81,6 +80,13 @@ export default function Hero() {
             <h1 className="hero-h1" style={{ animation: 'fadeUp 0.7s 0.15s ease both' }}>
               We teach emotional<br />intelligence.
             </h1>
+
+            {/* Stats — below headings */}
+            <div className="hs-stats-row" ref={statsRef}>
+              {heroStats.map((s, i) => (
+                <StatItem key={i} {...s} started={statsStarted} delay={i * 150} />
+              ))}
+            </div>
           </div>
 
           <div className="hero-character">
@@ -90,13 +96,6 @@ export default function Hero() {
               className="hero-character-img"
             />
           </div>
-        </div>
-
-        {/* Stats row — below on all screen sizes */}
-        <div className="hs-stats-row" ref={statsRef}>
-          {heroStats.map((s, i) => (
-            <StatItem key={i} {...s} started={statsStarted} delay={i * 150} />
-          ))}
         </div>
       </div>
 
@@ -180,7 +179,7 @@ export default function Hero() {
       .hero-text {
         flex: 1 1 0;
         max-width: 580px;
-        text-align: left;
+        text-align: center;
       }
 
       .hero-eyebrow {
@@ -219,12 +218,10 @@ export default function Hero() {
         flex: 1;
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        padding: 0 24px 0 0;
+        align-items: center;
+        padding: 0 12px;
         gap: 5px;
       }
-
-      .hs-stat:last-child { padding-right: 0; }
 
       .hs-stat-num {
         font-family: 'Sora', sans-serif;
