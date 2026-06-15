@@ -40,7 +40,7 @@ export default function Navbar({ onOpenDemo }) {
         transition: 'background 0.4s ease, border-color 0.4s ease',
       }}
     >
-      <div className="container" style={{
+      <div className="container nav-container" style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -51,6 +51,7 @@ export default function Navbar({ onOpenDemo }) {
           <img
             src="/logo.svg"
             alt="Halo Sim Labs"
+            className="nav-logo"
             style={{
               height: 360,
               width: 'auto',
@@ -219,6 +220,8 @@ export default function Navbar({ onOpenDemo }) {
           .nav-links { display: none !important; }
           .nav-cta { display: none !important; }
           .hamburger-btn { display: flex !important; }
+          .nav-logo { height: 180px !important; }
+          .nav-container { height: 70px !important; }
         }
       `}</style>
     </nav>

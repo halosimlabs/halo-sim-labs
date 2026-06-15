@@ -265,22 +265,46 @@ export default function Hero() {
           align-items: center;
           gap: 0;
           padding-bottom: 0;
+          text-align: center;
         }
 
         .hero-text {
           max-width: 100%;
           text-align: center;
+          width: 100%;
+        }
+
+        .hero-eyebrow {
+          text-align: center;
+        }
+
+        .hero-h1 {
+          font-size: clamp(1.3rem, 5vw, 1.8rem) !important;
         }
 
         .hs-stats-row {
-          margin-top: 28px;
+          margin-top: 24px;
+          justify-content: center;
+        }
+
+        .hs-stat {
+          padding: 16px 8px 0;
+        }
+
+        .hs-stat-num {
+          font-size: clamp(1rem, 4vw, 1.3rem) !important;
+        }
+
+        .hs-stat-label {
+          font-size: 0.65rem;
+          max-width: 70px;
         }
 
         .hero-character {
-          width: 72%;
-          max-width: 300px;
+          width: 65%;
+          max-width: 260px;
           align-self: center;
-          margin-top: 16px;
+          margin-top: 12px;
         }
       }
     `}</style>
