@@ -1,38 +1,5 @@
 /* Section — Inclusive Design */
 
-const pillars = [
-  {
-    label: '01',
-    title: 'If you read differently',
-    desc: 'Switch to a dyslexia-friendly font with one tap. Spacing, line height, everything adjusts. Reading should not be the hard part.',
-  },
-  {
-    label: '02',
-    title: 'If motion is overwhelming',
-    desc: 'Every animation can be turned off. Not scaled back. Off. Some students need stillness to focus, and that is completely valid.',
-  },
-  {
-    label: '03',
-    title: 'If screens are hard to see',
-    desc: 'High-contrast mode cranks the visibility up. Large text mode goes further. Screen readers find everything properly labelled.',
-  },
-  {
-    label: '04',
-    title: 'If sound does not reach you',
-    desc: 'Nothing important lives only in audio. Captions, on-screen text cues, and visual feedback are built in from the start.',
-  },
-  {
-    label: '05',
-    title: 'If a mouse is not an option',
-    desc: 'Every part of the platform works with a keyboard. No traps, no dead ends. Tab through the whole thing if you need to.',
-  },
-  {
-    label: '06',
-    title: 'If you need things predictable',
-    desc: 'Consistent layouts. No surprise pop-ups. Clear signposting before anything changes. The experience behaves the way you expect.',
-  },
-]
-
 export default function Inclusive() {
   return (
     <section
@@ -45,7 +12,6 @@ export default function Inclusive() {
 
         {/* Header */}
         <div style={{ maxWidth: 640, marginBottom: 72 }}>
-          <span className="eyebrow reveal">Access</span>
           <h2
             id="inclusive-heading"
             className="reveal reveal-delay-1"
@@ -85,60 +51,23 @@ export default function Inclusive() {
           </p>
         </div>
 
-        {/* Cards */}
-        <div
+        {/* Body */}
+        <p
+          className="reveal reveal-delay-3"
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))',
-            gap: 1,
-            border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: 14,
-            overflow: 'hidden',
+            fontSize: '1rem',
+            color: '#C9C9C9',
+            lineHeight: 1.85,
+            maxWidth: 680,
+            textAlign: 'center',
+            margin: '0 auto',
           }}
         >
-          {pillars.map((p, i) => (
-            <article
-              key={p.label}
-              className={`reveal reveal-delay-${(i % 4) + 1}`}
-              style={{
-                background: i % 2 === 0 ? 'rgba(255,255,255,0.015)' : 'rgba(255,255,255,0.025)',
-                padding: '32px 28px 36px',
-                borderRight: (i + 1) % 3 !== 0 ? '1px solid rgba(255,255,255,0.06)' : 'none',
-                borderBottom: i < pillars.length - 3 ? '1px solid rgba(255,255,255,0.06)' : 'none',
-              }}
-            >
-              <span style={{
-                display: 'block',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '0.65rem',
-                fontWeight: 600,
-                letterSpacing: '0.14em',
-                color: 'rgba(245,245,245,0.2)',
-                marginBottom: 20,
-              }} aria-hidden="true">
-                {p.label}
-              </span>
-              <h3 style={{
-                fontFamily: 'Sora, sans-serif',
-                fontSize: '0.95rem',
-                fontWeight: 600,
-                color: '#F5F5F5',
-                marginBottom: 12,
-                lineHeight: 1.3,
-              }}>
-                {p.title}
-              </h3>
-              <p style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '0.85rem',
-                color: 'rgba(245,245,245,0.4)',
-                lineHeight: 1.8,
-              }}>
-                {p.desc}
-              </p>
-            </article>
-          ))}
-        </div>
+          Halo Sim Labs is built for all students. As part of our long-term innovation roadmap,
+          we are also developing sign language-based simulation experiences for deaf learners,
+          ensuring that emotional intelligence education remains accessible, engaging, and relevant
+          for every student.
+        </p>
 
       </div>
 

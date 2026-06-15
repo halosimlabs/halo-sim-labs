@@ -32,7 +32,6 @@ export default function StatsSection() {
       <div className="container">
 
         <div style={{ marginBottom: 56 }}>
-          <span className="eyebrow">The Evidence</span>
           <h2 style={{
             fontFamily: 'Sora, sans-serif',
             fontSize: 'clamp(1.9rem, 3.5vw, 2.6rem)',

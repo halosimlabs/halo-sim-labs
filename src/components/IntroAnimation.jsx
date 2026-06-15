@@ -40,7 +40,7 @@ export default function IntroAnimation({ onComplete }) {
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
-        background: '#0B0B0B',
+        background: '#000000',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -70,28 +70,6 @@ export default function IntroAnimation({ onComplete }) {
         />
       </div>
 
-      {/* Loading label */}
-      <div style={{
-        position: 'absolute',
-        bottom: 48,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        animation: 'fadeIn 0.6s ease 0.8s both',
-      }}>
-        <div style={{ width: 20, height: 1, background: 'rgba(245,245,245,0.15)' }} />
-        <span style={{
-          fontFamily: 'Inter, sans-serif',
-          fontSize: '0.6rem',
-          fontWeight: 500,
-          letterSpacing: '0.22em',
-          color: 'rgba(245,245,245,0.2)',
-          textTransform: 'uppercase',
-        }}>
-          Halo Sim Labs
-        </span>
-        <div style={{ width: 20, height: 1, background: 'rgba(245,245,245,0.15)' }} />
-      </div>
     </div>
   )
 }

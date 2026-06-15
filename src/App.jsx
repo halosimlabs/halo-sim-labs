@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import IntroAnimation from './components/IntroAnimation'
 import Navbar from './components/Navbar'
+import DemoModal from './components/DemoModal'
 import Hero from './components/Hero'
 import WhyItMatters from './components/WhyItMatters'
 import WhatIsHaloSim from './components/WhatIsHaloSim'
@@ -12,6 +13,7 @@ import AccessibilityBar from './components/AccessibilityBar'
 
 function App() {
   const [introComplete, setIntroComplete] = useState(false)
+  const [demoOpen, setDemoOpen] = useState(false)
 
   useEffect(() => {
     if (!introComplete) return
@@ -43,7 +45,7 @@ function App() {
         opacity: introComplete ? 1 : 0,
         transition: 'opacity 0.8s ease 0.1s',
       }}>
-        <Navbar />
+        <Navbar onOpenDemo={() => setDemoOpen(true)} />
         <main id="main-content">
           <Hero />
           <StatsSection />
@@ -54,6 +56,7 @@ function App() {
         </main>
         <Footer />
         <AccessibilityBar />
+        <DemoModal open={demoOpen} onClose={() => setDemoOpen(false)} />
       </div>
     </>
   )

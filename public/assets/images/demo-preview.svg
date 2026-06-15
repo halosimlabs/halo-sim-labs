@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1410"/>
+      <stop offset="100%" style="stop-color:#0d0a08"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b7cf6;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#8b7cf6;stop-opacity:0"/>
+    </linearGradient>
+    <radialGradient id="light1" cx="50%" cy="20%" r="40%">
+      <stop offset="0%" style="stop-color:#fff8e7;stop-opacity:0.12"/>
+      <stop offset="100%" style="stop-color:#fff8e7;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <!-- Ambient ceiling light -->
+  <rect width="1280" height="720" fill="url(#light1)"/>
+  <!-- Floor -->
+  <rect x="0" y="480" width="1280" height="240" fill="#2c2c2a" opacity="0.8"/>
+  <!-- Floor grid lines -->
+  <g stroke="#3a3a38" stroke-width="1" opacity="0.5">
+    <line x1="0" y1="500" x2="1280" y2="500"/>
+    <line x1="0" y1="530" x2="1280" y2="530"/>
+    <line x1="0" y1="570" x2="1280" y2="570"/>
+    <line x1="0" y1="620" x2="1280" y2="620"/>
+    <line x1="0" y1="680" x2="1280" y2="680"/>
+  </g>
+  <!-- Brick wall suggestion -->
+  <g opacity="0.15">
+    <rect x="0" y="0" width="1280" height="480" fill="#4a3728"/>
+    <!-- Brick rows -->
+    <g stroke="#2a1e14" stroke-width="2" fill="none">
+      <rect x="0" y="60" width="120" height="50"/><rect x="124" y="60" width="120" height="50"/><rect x="248" y="60" width="120" height="50"/><rect x="372" y="60" width="120" height="50"/><rect x="496" y="60" width="120" height="50"/><rect x="620" y="60" width="120" height="50"/><rect x="744" y="60" width="120" height="50"/><rect x="868" y="60" width="120" height="50"/><rect x="992" y="60" width="120" height="50"/><rect x="1116" y="60" width="164" height="50"/>
+      <rect x="-60" y="114" width="120" height="50"/><rect x="64" y="114" width="120" height="50"/><rect x="188" y="114" width="120" height="50"/><rect x="312" y="114" width="120" height="50"/><rect x="436" y="114" width="120" height="50"/><rect x="560" y="114" width="120" height="50"/><rect x="684" y="114" width="120" height="50"/><rect x="808" y="114" width="120" height="50"/><rect x="932" y="114" width="120" height="50"/><rect x="1056" y="114" width="120" height="50"/>
+    </g>
+  </g>
+  <!-- Violet accent glow at top -->
+  <rect width="1280" height="720" fill="url(#glow)" opacity="0.4"/>
+  <!-- Silhouette characters -->
+  <!-- Melissa group -->
+  <g opacity="0.7">
+    <!-- Sthandile -->
+    <ellipse cx="780" cy="350" rx="28" ry="90" fill="#1a1410"/>
+    <circle cx="780" cy="240" r="32" fill="#1a1410"/>
+    <!-- Kelly -->
+    <ellipse cx="720" cy="360" rx="26" ry="85" fill="#1a1410"/>
+    <circle cx="720" cy="255" r="29" fill="#1a1410"/>
+    <!-- Nadine -->
+    <ellipse cx="660" cy="355" rx="25" ry="88" fill="#1a1410"/>
+    <circle cx="660" cy="248" r="30" fill="#1a1410"/>
+    <!-- Melissa -->
+    <ellipse cx="570" cy="370" rx="27" ry="92" fill="#1a1410"/>
+    <circle cx="570" cy="255" r="33" fill="#1a1410"/>
+  </g>
+  <!-- Violet rim light on characters -->
+  <g opacity="0.25">
+    <ellipse cx="780" cy="290" rx="35" ry="110" fill="none" stroke="#8b7cf6" stroke-width="2"/>
+    <ellipse cx="720" cy="300" rx="32" ry="105" fill="none" stroke="#8b7cf6" stroke-width="1.5"/>
+    <ellipse cx="660" cy="295" rx="31" ry="108" fill="none" stroke="#8b7cf6" stroke-width="1.5"/>
+    <ellipse cx="570" cy="300" rx="33" ry="112" fill="none" stroke="#8b7cf6" stroke-width="2"/>
+  </g>
+  <!-- Background pair -->
+  <g opacity="0.4">
+    <ellipse cx="500" cy="340" rx="18" ry="70" fill="#1a1410"/>
+    <circle cx="500" cy="258" r="22" fill="#1a1410"/>
+    <ellipse cx="540" cy="342" rx="17" ry="68" fill="#1a1410"/>
+    <circle cx="540" cy="261" r="20" fill="#1a1410"/>
+  </g>
+  <!-- UI overlay — scenario badge -->
+  <rect x="40" y="40" width="220" height="42" rx="8" fill="rgba(139,124,246,0.15)" stroke="rgba(139,124,246,0.4)" stroke-width="1"/>
+  <text x="60" y="66" font-family="'Inter', sans-serif" font-size="14" fill="#8b7cf6" font-weight="600">Melissa's World · Scene 1</text>
+  <!-- Choice indicator -->
+  <rect x="40" y="600" width="380" height="52" rx="10" fill="rgba(0,0,0,0.6)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+  <text x="60" y="625" font-family="'Inter', sans-serif" font-size="13" fill="rgba(240,240,245,0.5)" font-weight="400">Sthandile just said something hurtful.</text>
+  <text x="60" y="643" font-family="'Inter', sans-serif" font-size="13" fill="rgba(240,240,245,0.8)" font-weight="500">What does Melissa do?</text>
+  <!-- Choice buttons -->
+  <rect x="440" y="606" width="200" height="38" rx="8" fill="rgba(139,124,246,0.2)" stroke="rgba(139,124,246,0.5)" stroke-width="1"/>
+  <text x="540" y="630" font-family="'Inter', sans-serif" font-size="13" fill="#c4baf8" font-weight="500" text-anchor="middle">Speak up for herself</text>
+  <rect x="656" y="606" width="180" height="38" rx="8" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+  <text x="746" y="630" font-family="'Inter', sans-serif" font-size="13" fill="rgba(240,240,245,0.6)" font-weight="400" text-anchor="middle">Walk away quietly</text>
+  <!-- Watermark -->
+  <text x="1240" y="700" font-family="'Inter', sans-serif" font-size="12" fill="rgba(255,255,255,0.15)" text-anchor="end">Halo Sim Labs</text>
+</svg>

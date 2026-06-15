@@ -28,7 +28,6 @@ export default function WhyItMatters() {
       <div className="container">
         {/* Header */}
         <div style={{ marginBottom: 72 }}>
-          <span className="eyebrow reveal">The Challenge</span>
           <h2 className="reveal reveal-delay-1" style={{
             fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)',
             fontWeight: 700,

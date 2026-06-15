@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 
 // ── Update this number as interest grows ──
-const SCHOOLS_COUNT = 20
+const SCHOOLS_COUNT = 40
 
 function useCountUp(target, duration = 1600) {
   const [value, setValue] = useState(0)
@@ -117,7 +117,6 @@ export default function Waitlist() {
 
           {/* Left — text */}
           <div>
-            <span className="eyebrow reveal">Get Involved</span>
             <h2 className="reveal reveal-delay-1" style={{
               fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)',
               fontWeight: 700,
@@ -191,7 +190,7 @@ export default function Waitlist() {
                 fontVariantNumeric: 'tabular-nums',
                 marginBottom: 10,
               }}>
-                {schoolCount}
+                {schoolCount}+
               </div>
               <p style={{
                 fontFamily: 'Inter, sans-serif',

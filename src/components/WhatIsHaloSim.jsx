@@ -17,9 +17,6 @@ export default function WhatIsHaloSim() {
 
           {/* Left — label + concept tag */}
           <div className="reveal">
-            <span className="eyebrow" style={{ display: 'block', marginBottom: 24 }}>
-              The Concept
-            </span>
 
             {/* Tagline */}
             <blockquote style={{

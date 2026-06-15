@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-export default function Navbar() {
+export default function Navbar({ onOpenDemo }) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -80,6 +80,7 @@ export default function Navbar() {
                   fontSize: '0.875rem',
                   fontWeight: 500,
                   letterSpacing: '0.01em',
+                  whiteSpace: 'nowrap',
                   transition: 'color 0.2s ease',
                 }}
                 onMouseEnter={e => e.target.style.color = 'rgba(245,245,245,0.9)'}
@@ -92,7 +93,25 @@ export default function Navbar() {
         </ul>
 
         {/* Right CTA */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginLeft: 40 }}>
+          <button onClick={onOpenDemo} style={{
+            fontSize: '0.85rem',
+            padding: '10px 20px',
+            borderRadius: 8,
+            background: 'rgba(139, 124, 246, 0.18)',
+            color: '#c4baff',
+            border: '1px solid rgba(139, 124, 246, 0.3)',
+            fontWeight: 600,
+            letterSpacing: '0.01em',
+            whiteSpace: 'nowrap',
+            transition: 'background 0.2s ease, border-color 0.2s ease',
+            cursor: 'pointer',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,124,246,0.28)'; e.currentTarget.style.borderColor = 'rgba(139,124,246,0.5)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(139,124,246,0.18)'; e.currentTarget.style.borderColor = 'rgba(139,124,246,0.3)' }}
+          >
+            Request Demo
+          </button>
           <a href="#waitlist" className="btn-primary" style={{ fontSize: '0.85rem', padding: '10px 20px' }}>
             Join the Waitlist
           </a>
@@ -164,15 +183,34 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
-          <a
-            href="#waitlist"
-            className="btn-primary"
-            tabIndex={mobileOpen ? 0 : -1}
-            onClick={() => setMobileOpen(false)}
-            style={{ marginTop: 24, display: 'inline-flex', fontSize: '0.875rem' }}
-          >
-            Join the Waitlist
-          </a>
+          <div style={{ display: 'flex', gap: 10, marginTop: 24, flexWrap: 'wrap' }}>
+            <button
+              tabIndex={mobileOpen ? 0 : -1}
+              onClick={() => { setMobileOpen(false); onOpenDemo() }}
+              style={{
+                display: 'inline-flex',
+                fontSize: '0.875rem',
+                padding: '10px 20px',
+                borderRadius: 8,
+                background: 'rgba(139, 124, 246, 0.18)',
+                color: '#c4baff',
+                border: '1px solid rgba(139, 124, 246, 0.3)',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              Request Demo
+            </button>
+            <a
+              href="#waitlist"
+              className="btn-primary"
+              tabIndex={mobileOpen ? 0 : -1}
+              onClick={() => setMobileOpen(false)}
+              style={{ display: 'inline-flex', fontSize: '0.875rem' }}
+            >
+              Join the Waitlist
+            </a>
+          </div>
         </div>
       </div>
 

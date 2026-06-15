@@ -1,4 +1,58 @@
+import { useEffect, useRef, useState } from 'react'
+
+const heroStats = [
+  { end: 40,  suffix: '+',  label: 'Schools Interested' },
+  { end: 500, suffix: '+',  label: 'Learners in Pilot' },
+  { end: 4,   suffix: '',   label: 'Rural Schools in Pilot' },
+  { end: 300, suffix: 'K+', label: 'People Reached Digitally' },
+]
+
+function useCountUp(end, duration, started) {
+  const [count, setCount] = useState(0)
+  useEffect(() => {
+    if (!started) return
+    let startTime = null
+    const step = (ts) => {
+      if (!startTime) startTime = ts
+      const p = Math.min((ts - startTime) / duration, 1)
+      setCount(Math.floor((1 - Math.pow(1 - p, 3)) * end))
+      if (p < 1) requestAnimationFrame(step)
+      else setCount(end)
+    }
+    requestAnimationFrame(step)
+  }, [end, duration, started])
+  return count
+}
+
+function StatItem({ end, suffix, label, started, delay }) {
+  const [active, setActive] = useState(false)
+  useEffect(() => {
+    if (!started) return
+    const t = setTimeout(() => setActive(true), delay)
+    return () => clearTimeout(t)
+  }, [started, delay])
+  const count = useCountUp(end, 2400, active)
+  return (
+    <div className="hs-stat">
+      <span className="hs-stat-num">{count}{suffix}</span>
+      <span className="hs-stat-label">{label}</span>
+    </div>
+  )
+}
+
 export default function Hero() {
+  const statsRef = useRef(null)
+  const [statsStarted, setStatsStarted] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setStatsStarted(true) },
+      { threshold: 0.3 }
+    )
+    if (statsRef.current) observer.observe(statsRef.current)
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <>
     <section
@@ -13,66 +67,37 @@ export default function Hero() {
         background: '#0B0B0B',
       }}
     >
-      {/* Subtle radial glow */}
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'radial-gradient(ellipse 60% 50% at 50% 45%, rgba(255,255,255,0.025) 0%, transparent 70%)',
-        pointerEvents: 'none',
-      }} />
 
-      <div className="container" style={{
-        position: 'relative',
-        zIndex: 2,
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-      }}>
-        <div style={{ maxWidth: 700, textAlign: 'center' }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 12,
-            marginBottom: 40,
-            animation: 'fadeUp 0.7s ease both',
-          }}>
-            <div style={{ width: 28, height: 1, background: 'rgba(245,245,245,0.15)' }} />
-            <span style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '0.68rem',
-              fontWeight: 600,
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              color: 'rgba(245,245,245,0.35)',
-            }}>
-              Simulation-Based Learning
-            </span>
-            <div style={{ width: 28, height: 1, background: 'rgba(245,245,245,0.15)' }} />
+      <div className="container hero-inner">
+        {/* Left: Text + Stats */}
+        <div className="hero-text">
+          <span className="hero-eyebrow">
+            Simulation-Based Learning
+          </span>
+
+          <h1 className="hero-h1 hero-h1-dim" style={{ animation: 'fadeUp 0.7s 0.1s ease both' }}>
+            Schools teach theory.
+          </h1>
+          <h1 className="hero-h1" style={{ animation: 'fadeUp 0.7s 0.15s ease both' }}>
+            We teach emotional<br />intelligence.
+          </h1>
+
+          {/* Inline stats */}
+          <div className="hs-stats-row" ref={statsRef}>
+            {heroStats.map((s, i) => (
+              <StatItem key={i} {...s} started={statsStarted} delay={i * 150} />
+            ))}
           </div>
-
-          <h1 style={{
-            fontSize: 'clamp(1.8rem, 3.5vw, 3.2rem)',
-            fontWeight: 800,
-            lineHeight: 1.06,
-            letterSpacing: '-0.03em',
-            marginBottom: 12,
-            animation: 'fadeUp 0.7s 0.1s ease both',
-          }}>
-            <span style={{ color: 'rgba(245,245,245,0.3)' }}>Schools teach theory.</span>
-          </h1>
-          <h1 style={{
-            fontSize: 'clamp(1.8rem, 3.5vw, 3.2rem)',
-            fontWeight: 800,
-            lineHeight: 1.06,
-            letterSpacing: '-0.03em',
-            color: '#F5F5F5',
-            animation: 'fadeUp 0.7s 0.15s ease both',
-          }}>
-            We teach emotional intelligence.
-          </h1>
         </div>
 
+        {/* Right: Character */}
+        <div className="hero-character">
+          <img
+            src="/assets/characters/student-character.png"
+            alt="Student character"
+            className="hero-character-img"
+          />
+        </div>
       </div>
 
       {/* Bottom fade */}
@@ -81,7 +106,7 @@ export default function Hero() {
         bottom: 0,
         left: 0,
         right: 0,
-        height: 100,
+        height: 120,
         background: 'linear-gradient(to top, #0B0B0B, transparent)',
         pointerEvents: 'none',
       }} />
@@ -138,6 +163,120 @@ export default function Hero() {
       </div>
     </section>
 
+    <style>{`
+      .hero-inner {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 40px;
+      }
+
+      .hero-text {
+        flex: 1 1 0;
+        max-width: 580px;
+        text-align: center;
+      }
+
+      .hero-eyebrow {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(245, 245, 245, 0.35);
+        display: block;
+        margin-bottom: 40px;
+        animation: fadeUp 0.7s ease both;
+      }
+
+      .hero-h1 {
+        font-size: clamp(1.4rem, 2.4vw, 2.2rem);
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.03em;
+        color: #F5F5F5;
+        margin: 0 0 12px;
+      }
+
+      .hero-h1-dim {
+        color: rgba(245, 245, 245, 0.3);
+      }
+
+      .hs-stats-row {
+        display: flex;
+        gap: 0;
+        margin-top: 48px;
+        animation: fadeUp 0.7s 0.3s ease both;
+      }
+
+      .hs-stat {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 12px 0;
+        gap: 5px;
+      }
+
+      .hs-stat-num {
+        font-family: 'Sora', sans-serif;
+        font-size: clamp(1.2rem, 2vw, 1.6rem);
+        font-weight: 800;
+        color: #F5F5F5;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+
+      .hs-stat-label {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.72rem;
+        color: rgba(245, 245, 245, 0.38);
+        text-align: center;
+        line-height: 1.4;
+      }
+
+      .hero-character {
+        flex: 0 0 auto;
+        width: clamp(240px, 38vw, 500px);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        align-self: flex-end;
+      }
+
+      .hero-character-img {
+        width: 100%;
+        height: auto;
+        max-height: 80vh;
+        object-fit: contain;
+        object-position: bottom center;
+        mix-blend-mode: screen;
+        transform-origin: bottom center;
+        filter: brightness(0.72) saturate(0.85);
+        animation: fadeUp 0.9s 0.2s ease both;
+      }
+
+      @media (max-width: 768px) {
+        .hero-inner {
+          flex-direction: column;
+          align-items: flex-start;
+          padding-bottom: 0;
+        }
+
+        .hero-text {
+          max-width: 100%;
+        }
+
+        .hero-character {
+          width: 80%;
+          max-width: 340px;
+          align-self: center;
+        }
+      }
+    `}</style>
     </>
   )
 }
