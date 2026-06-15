@@ -274,44 +274,46 @@ export default function Hero() {
         #hero {
           min-height: 100vh !important;
           padding-top: 70px !important;
-          align-items: flex-start !important;
+          align-items: center !important;
         }
 
         .hero-inner {
-          align-items: center;
-          gap: 12px;
-          margin-top: 24px;
+          flex-direction: row !important;
+          align-items: flex-end !important;
+          gap: 0 !important;
         }
 
         .hero-text {
-          max-width: 54%;
-          text-align: left;
+          flex: 0 0 56% !important;
+          max-width: 56% !important;
+          text-align: left !important;
         }
 
         .hero-eyebrow {
-          font-size: 0.5rem;
-          letter-spacing: 0.1em;
-          margin-bottom: 12px;
+          font-size: 0.5rem !important;
+          letter-spacing: 0.1em !important;
+          margin-bottom: 12px !important;
         }
 
         .hero-h1 {
-          font-size: clamp(1rem, 4.2vw, 1.4rem) !important;
+          font-size: clamp(1.05rem, 4.2vw, 1.4rem) !important;
           margin-bottom: 6px !important;
         }
 
         .hero-character {
-          width: 44%;
-          max-width: 230px;
-          align-self: center;
+          flex: 0 0 44% !important;
+          width: 44% !important;
+          max-width: none !important;
+          align-self: flex-end !important;
         }
 
         .hs-stats-desktop { display: none !important; }
 
         .hs-stats-mobile {
-          display: flex;
+          display: flex !important;
           flex-wrap: wrap;
-          gap: 16px 0;
-          margin-top: 28px;
+          gap: 20px 0;
+          margin-top: 32px;
         }
 
         .hs-stats-mobile .hs-stat {
@@ -321,11 +323,11 @@ export default function Hero() {
         }
 
         .hs-stats-mobile .hs-stat-num {
-          font-size: clamp(1.1rem, 4.5vw, 1.5rem);
+          font-size: clamp(1.3rem, 5vw, 1.7rem);
         }
 
         .hs-stats-mobile .hs-stat-label {
-          font-size: 0.68rem;
+          font-size: 0.72rem;
           text-align: left;
         }
       }
