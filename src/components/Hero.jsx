@@ -261,50 +261,54 @@ export default function Hero() {
 
       @media (max-width: 768px) {
         .hero-inner {
-          flex-direction: column;
+          flex-direction: row;
           align-items: center;
-          gap: 0;
-          padding-bottom: 0;
-          text-align: center;
+          gap: 16px;
         }
 
         .hero-text {
-          max-width: 100%;
-          text-align: center;
-          width: 100%;
+          flex: 1 1 0;
+          text-align: left;
         }
 
         .hero-eyebrow {
-          text-align: center;
+          font-size: 0.55rem;
+          margin-bottom: 20px;
         }
 
         .hero-h1 {
-          font-size: clamp(1.3rem, 5vw, 1.8rem) !important;
+          font-size: clamp(1.1rem, 4.5vw, 1.5rem) !important;
+          margin-bottom: 8px !important;
         }
 
         .hs-stats-row {
-          margin-top: 24px;
-          justify-content: center;
+          margin-top: 20px;
+          flex-wrap: wrap;
+          gap: 8px 0;
         }
 
         .hs-stat {
-          padding: 16px 8px 0;
+          flex: 1 1 45%;
+          padding: 12px 4px 0;
+          align-items: flex-start;
         }
 
         .hs-stat-num {
-          font-size: clamp(1rem, 4vw, 1.3rem) !important;
+          font-size: clamp(0.95rem, 3.5vw, 1.2rem) !important;
         }
 
         .hs-stat-label {
-          font-size: 0.65rem;
-          max-width: 70px;
+          font-size: 0.62rem;
+          max-width: none;
+          text-align: left;
         }
 
         .hero-character {
-          width: 65%;
-          max-width: 260px;
-          align-self: center;
-          margin-top: 12px;
+          flex: 0 0 auto;
+          width: 38%;
+          max-width: 180px;
+          align-self: flex-end;
+          margin-top: 0;
         }
       }
     `}</style>
