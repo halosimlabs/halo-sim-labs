@@ -261,6 +261,13 @@ export default function Hero() {
       }
 
       @media (max-width: 768px) {
+        #hero {
+          min-height: unset !important;
+          padding-top: 80px !important;
+          padding-bottom: 32px !important;
+          align-items: flex-start !important;
+        }
+
         .hero-inner {
           align-items: flex-end;
           gap: 16px;
