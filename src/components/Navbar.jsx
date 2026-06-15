@@ -118,6 +118,27 @@ export default function Navbar({ onOpenDemo }) {
           </a>
         </div>
 
+        {/* Demo button — mobile only */}
+        <button
+          onClick={onOpenDemo}
+          className="nav-demo-mobile"
+          style={{
+            display: 'none',
+            fontSize: '0.75rem',
+            padding: '8px 14px',
+            borderRadius: 7,
+            background: 'rgba(139, 124, 246, 0.18)',
+            color: '#c4baff',
+            border: '1px solid rgba(139, 124, 246, 0.3)',
+            fontWeight: 600,
+            whiteSpace: 'nowrap',
+            cursor: 'pointer',
+            marginRight: 10,
+          }}
+        >
+          Request Demo
+        </button>
+
         {/* Hamburger — mobile only */}
         <button
           className="hamburger-btn"
@@ -224,6 +245,7 @@ export default function Navbar({ onOpenDemo }) {
           .hamburger-btn { display: flex !important; }
           .nav-logo { height: 180px !important; }
           .nav-container { height: 70px !important; }
+          .nav-demo-mobile { display: flex !important; }
         }
       `}</style>
     </nav>

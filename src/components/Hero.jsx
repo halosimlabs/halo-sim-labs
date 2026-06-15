@@ -272,10 +272,9 @@ export default function Hero() {
 
       @media (max-width: 768px) {
         #hero {
-          min-height: unset !important;
-          padding-top: 90px !important;
-          padding-bottom: 40px !important;
-          align-items: flex-start !important;
+          min-height: 100vh !important;
+          padding-top: 70px !important;
+          align-items: center !important;
         }
 
         .hero-inner {
@@ -284,24 +283,24 @@ export default function Hero() {
         }
 
         .hero-text {
-          max-width: 55%;
+          max-width: 54%;
           text-align: left;
         }
 
         .hero-eyebrow {
-          font-size: 0.52rem;
+          font-size: 0.5rem;
           letter-spacing: 0.1em;
-          margin-bottom: 14px;
+          margin-bottom: 12px;
         }
 
         .hero-h1 {
-          font-size: clamp(1.1rem, 4.5vw, 1.5rem) !important;
-          margin-bottom: 8px !important;
+          font-size: clamp(1rem, 4.2vw, 1.4rem) !important;
+          margin-bottom: 6px !important;
         }
 
         .hero-character {
-          width: 42%;
-          max-width: 220px;
+          width: 44%;
+          max-width: 230px;
           align-self: flex-end;
         }
 
@@ -310,8 +309,8 @@ export default function Hero() {
         .hs-stats-mobile {
           display: flex;
           flex-wrap: wrap;
-          gap: 20px 0;
-          margin-top: 36px;
+          gap: 16px 0;
+          margin-top: 28px;
         }
 
         .hs-stats-mobile .hs-stat {
@@ -321,11 +320,11 @@ export default function Hero() {
         }
 
         .hs-stats-mobile .hs-stat-num {
-          font-size: clamp(1.2rem, 5vw, 1.6rem);
+          font-size: clamp(1.1rem, 4.5vw, 1.5rem);
         }
 
         .hs-stats-mobile .hs-stat-label {
-          font-size: 0.7rem;
+          font-size: 0.68rem;
           text-align: left;
         }
       }
