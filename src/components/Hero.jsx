@@ -274,37 +274,42 @@ export default function Hero() {
         #hero {
           min-height: 100vh !important;
           padding-top: 70px !important;
-          align-items: center !important;
+          align-items: flex-start !important;
         }
 
         .hero-inner {
-          flex-direction: row !important;
-          align-items: flex-end !important;
-          gap: 0 !important;
+          flex-direction: column !important;
+          align-items: center !important;
+          gap: 16px !important;
+        }
+
+        .hero-character {
+          order: -1;
+          width: 60% !important;
+          max-width: 260px !important;
+          align-self: center !important;
+        }
+
+        .hero-character-img {
+          max-height: 40vh !important;
         }
 
         .hero-text {
-          flex: 0 0 56% !important;
-          max-width: 56% !important;
-          text-align: left !important;
+          flex: none !important;
+          max-width: 100% !important;
+          width: 100% !important;
+          text-align: center !important;
         }
 
         .hero-eyebrow {
-          font-size: 0.5rem !important;
-          letter-spacing: 0.1em !important;
+          font-size: 0.55rem !important;
+          letter-spacing: 0.12em !important;
           margin-bottom: 12px !important;
         }
 
         .hero-h1 {
-          font-size: clamp(1.05rem, 4.2vw, 1.4rem) !important;
-          margin-bottom: 6px !important;
-        }
-
-        .hero-character {
-          flex: 0 0 44% !important;
-          width: 44% !important;
-          max-width: none !important;
-          align-self: flex-end !important;
+          font-size: clamp(1.3rem, 5.5vw, 1.8rem) !important;
+          margin-bottom: 8px !important;
         }
 
         .hs-stats-desktop { display: none !important; }
@@ -313,7 +318,7 @@ export default function Hero() {
           display: flex !important;
           flex-wrap: wrap;
           gap: 20px 0;
-          margin-top: 32px;
+          margin-top: 28px;
         }
 
         .hs-stats-mobile .hs-stat {
